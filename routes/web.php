@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/validacion', [ValidacionController::class, 'index'])->name('validacion.index');
     Route::get('/validacion/{pedido}', [ValidacionController::class, 'validar'])->name('validacion.validar');
     Route::post('/validacion/{pedido}/producto', [ValidacionController::class, 'validarProducto'])->name('validacion.producto');
-    Route::post('/validacion/{pedido}', [ValidacionController::class, 'procesar'])->name('validacion.procesar');
+    //Route::post('/validacion/{pedido}', [ValidacionController::class, 'procesar'])->name('validacion.procesar');
     Route::patch('/validacion/{pedido}/finalizar', [ValidacionController::class, 'finalizar'])->name('validacion.finalizar');
 
 });

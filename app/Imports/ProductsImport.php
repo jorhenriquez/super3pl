@@ -14,6 +14,7 @@ class ProductsImport implements ToModel, WithHeadingRow
             'descripcion' => $row['descripcion'],
             'codigo' => $row['codigo'],
             'ean' => $row['ean'],
+            'ean_modificado' => $row['ean_mod'],
         ]);
     }
 }

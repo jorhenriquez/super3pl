@@ -67,5 +67,6 @@ class DatabaseSeeder extends Seeder
         } else {
             $this->command->warn('Archivo de líneas no encontrado.');
         }
+            
     }
 }

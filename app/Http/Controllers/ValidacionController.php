@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\ErroresValidacion;
 use Illuminate\Support\Facades\Auth;
 use App\Models\RegistroErrorValidacion;
+use Illuminate\Support\Str;
+
 
 class ValidacionController extends Controller
 {
@@ -92,10 +94,13 @@ class ValidacionController extends Controller
     
     public function validarProducto(Request $request, Pedido $pedido)
     {
-        $codigo = $request->input('codigo');
-    
+        $codigoEscaneado = $request->input('codigo');
+        // Normaliza el código: si comienza con 1 o 2, lo elimina
+        $codigo = substr($codigoEscaneado, 1,-1);
+
+
         $producto = Product::where('codigo', $codigo)
-            ->orWhere('ean', $codigo)
+            ->orWhere('ean','like',"%{$codigo}%")
             ->first();
     
         if (!$producto) {
@@ -138,8 +143,4 @@ class ValidacionController extends Controller
             'finalizado' => $completas,
         ]);
     }
-    
-
-
-
 }
