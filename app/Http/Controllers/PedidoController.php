@@ -24,8 +24,8 @@ class PedidoController extends Controller
         }
 
         // Filtro de búsqueda
-        if ($request->filled('search')) {
-            $search = $request->input('search');
+        if ($request->filled('search_pedido')) {
+            $search = $request->input('search_pedido');
 
             $query->where(function($q) use ($search) {
                 $q->where('referencia', 'like', "%{$search}%")
@@ -137,7 +137,15 @@ class PedidoController extends Controller
         $pedido->user_id = $request->usuario_id;
         $pedido->save();
 
-        return redirect()->route('pedidos.index')->with('success', 'Usuario asignado correctamente');
+        // Preserve search_pedido if present
+        $search = $request->input('search_pedido');
+        $params = [];
+        if ($search) {
+            $params['search_pedido'] = $search;
+        }
+
+        return redirect()->route('pedidos.index', $params)
+            ->with('success', 'Usuario asignado correctamente');
     }
 
     public function upEstado(Pedido $pedido)
@@ -145,7 +153,15 @@ class PedidoController extends Controller
         $pedido->estado_pedido_id++;
         $pedido->save();
 
-        return redirect()->route('pedidos.index')->with('success', 'Pedido actualizado correctamente');
+        // Preserve search_pedido if present
+        $search = request()->input('search_pedido');
+        $params = [];
+        if ($search) {
+            $params['search_pedido'] = $search;
+        }
+
+        return redirect()->route('pedidos.index', $params)
+            ->with('success', 'Pedido actualizado correctamente');
     }
 
     public function reasignar(Pedido $pedido)

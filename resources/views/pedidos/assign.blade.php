@@ -21,6 +21,9 @@
             <form action="{{ route('pedidos.updateAssign', $pedido->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+                @if(request('search_pedido'))
+                    <input type="hidden" name="search_pedido" value="{{ request('search_pedido') }}">
+                @endif
             
                 <p class="mb-4 text-gray-700 font-semibold">Selecciona un usuario para asignar el pedido:</p>
             

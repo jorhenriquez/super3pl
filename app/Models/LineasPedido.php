@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class LineasPedido extends Model
 {
+    protected $fillable = ['pedido_id','product_id','cantidad_total','cantidad_revisada','cantidad_asignada_manual'];
+      
     public function pedido()
     {
         return $this->belongsTo(Pedido::class);
