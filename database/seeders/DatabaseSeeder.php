@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
         EstadoPedido::create(['nombre' => 'En revision']);
         EstadoPedido::create(['nombre' => 'Revisado']);
         EstadoPedido::create(['nombre' => 'Anulado']);
-        
+        /*
         $lineasFile = database_path('seeders/files/data_lineas.xlsx');
 
         if (file_exists($lineasFile)) {
@@ -67,6 +67,7 @@ class DatabaseSeeder extends Seeder
         } else {
             $this->command->warn('Archivo de líneas no encontrado.');
         }
+            */
             
     }
 }

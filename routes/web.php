@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ValidacionController;
 use App\Http\Controllers\ProductImportController;
+use App\Http\Controllers\PedidoImportController;
 use App\Http\Controllers\RegistroErrorValidacionController;
 
 Route::get('/', function () {
@@ -47,6 +48,9 @@ Route::middleware(['auth', CheckRole::class . ':admin'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('products/import', [ProductImportController::class, 'show'])->name('products.import.form');
     Route::post('/products/import', [ProductImportController::class, 'import'])->name('products.import');
+    Route::get('/pedidos/import', [PedidoImportController::class, 'show'])->name('pedidos.import.form');
+    Route::post('/pedidos/import', [PedidoImportController::class, 'import'])->name('pedidos.import');
+
     Route::resource('pedidos', PedidoController::class)->except('index');
     Route::resource('products', ProductController::class);
     Route::resource('clientes', ClienteController::class);
@@ -57,8 +61,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/pedidos/{pedido}/reasignar', [PedidoController::class, 'reasignar'])->name('pedidos.reasignar');
     Route::patch('/pedidos/{pedido}/quitar-usuario', [PedidoController::class, 'quitarUsuario'])->name('pedidos.quitarUsuario');
     Route::get('/errores-validacion', [RegistroErrorValidacionController::class, 'index'])->name('errores.index');
-    Route::get('products/import', [ProductImportController::class, 'show'])->name('products.import.form');
-    Route::post('/products/import', [ProductImportController::class, 'import'])->name('products.import');
 });
 
 

@@ -23,22 +23,22 @@
                             />
                         </form>
 
-                        <!-- Botón Crear Producto -->
-                        <a href="{{ route('pedidos.create') }}" 
-                        class="relative inline-block bg-green-600 text-white px-4 py-2 rounded-md 
+                        <!-- Botón Importar Pedidos -->
+                        <a href="{{ route('pedidos.import.form') }}" 
+                        class="relative inline-block bg-blue-600 text-white px-4 py-2 rounded-md 
                                 transition-all duration-300 ease-in-out 
-                                hover:px-8 hover:text-lg hover:bg-green-700">
+                                hover:px-8 hover:text-lg hover:bg-blue-700">
 
-                            <!-- "+" visible normalmente, desaparece en hover -->
+                            <!-- "⇪" visible normalmente, desaparece en hover -->
                             <span class="inline-block transition-opacity duration-300 ease-in-out hover:opacity-0">
-                                +
+                                ⇪
                             </span>
 
-                            <!-- "Agregar" oculto normalmente, aparece en hover -->
+                            <!-- "Importar" oculto normalmente, aparece en hover -->
                             <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 
                                         opacity-0 pointer-events-none 
                                         transition-opacity duration-300 ease-in-out hover:opacity-100">
-                                Agregar
+                                Importar
                             </span>
                         </a>
 

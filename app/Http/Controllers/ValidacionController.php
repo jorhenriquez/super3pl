@@ -31,10 +31,12 @@ class ValidacionController extends Controller
         }
 
         // Si no, mostrar pedidos en estado "Asignado"
-        $pedidos = Pedido::where('estado_pedido_id', 2) // "Asignado"
+        $pedidos = Pedido::with('lineas.product')
+            ->where('estado_pedido_id', 2)
             ->where(function ($q) use ($user) {
                 $q->whereNull('user_id')->orWhere('user_id', $user->id);
             })->get();
+
 
         return view('validacion.index', compact('pedidos'));
     }
@@ -47,8 +49,12 @@ class ValidacionController extends Controller
             $pedido->save();
         }
 
+        // 🔁 Cargar líneas y productos asociados
+        $pedido->load('lineas.product');
+
         return view('validacion.validar', compact('pedido'));
     }
+
     
     public function procesar(Request $request, Pedido $pedido)
     {
@@ -128,7 +134,11 @@ class ValidacionController extends Controller
                 'error_type_id' => 2,
             ]);
             
-            return response()->json(['status' => 'error', 'message' => 'No existe este producto en este pedido o ya está completo.'], 400);
+            return response()->json(
+                    ['status' => 'error',
+                    'message' => 'No existe este producto en este pedido o ya está completo.',
+                    
+                ], 400);
         }
             
     
@@ -137,10 +147,11 @@ class ValidacionController extends Controller
         $completas = $pedido->lineas()->whereColumn('cantidad_total', '>', 'cantidad_revisada')->count() === 0;
     
         return response()->json([
-            'status' => 'success',
-            'message' => 'Producto validado correctamente.',
-            'linea' => $linea->only(['id', 'cantidad_revisada']),
-            'finalizado' => $completas,
-        ]);
+                'status' => 'success',
+                'message' => 'Producto validado correctamente',
+                'lineas_pedido' => $pedido->lineas()->with('product')->get(), // 👈 esto es clave
+                'last_validated_id' => $linea->id, // si quieres resaltar o mover
+            ]);
+
     }
 }

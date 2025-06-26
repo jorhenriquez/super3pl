@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Pedido;
+use App\Models\EstadoPedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class PedidoController extends Controller
 {
@@ -15,7 +18,6 @@ class PedidoController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
         $query = Pedido::query();
 
         // Filtrar por usuario si no es admin
@@ -26,14 +28,20 @@ class PedidoController extends Controller
         // Filtro de búsqueda
         if ($request->filled('search_pedido')) {
             $search = $request->input('search_pedido');
-
             $query->where(function($q) use ($search) {
                 $q->where('referencia', 'like', "%{$search}%")
                 ->orWhere('destino', 'like', "%{$search}%")
                 ->orWhere('direccion', 'like', "%{$search}%")
                 ->orWhere('comuna', 'like', "%{$search}%")
                 ->orWhere('cantidad', 'like', "%{$search}%");
-                // Nota: Si `estado` es una relación, este filtro no aplicará
+            });
+        }
+
+        // Filtro de estado_pedido (puede ser array)
+        $estados = $request->input('estado_pedido');
+        if ($estados) {
+            $query->whereHas('estado_pedido', function($q) use ($estados) {
+                $q->whereIn('nombre', (array)$estados);
             });
         }
 
@@ -44,7 +52,8 @@ class PedidoController extends Controller
                             ->paginate(10)
                             ->withQueryString();
 
-        return view('pedidos.index', compact('pedidos'));
+        $estadosDisponibles = EstadoPedido::orderBy('nombre')->pluck('nombre');
+        return view('pedidos.index', compact('pedidos', 'estadosDisponibles'));
 
     }
 
@@ -191,6 +200,23 @@ class PedidoController extends Controller
         }
 
         return redirect()->back()->with('error', 'No se puede eliminar el usuario en este estado.');
+    }
+
+    public function showImportForm()
+    {
+        return view('pedidos.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,csv',
+        ]);
+
+        $path = $request->file('file')->store('imports');
+        // Aquí puedes usar Laravel Excel o PHP para procesar el archivo
+        // Ejemplo simple: solo guardar el archivo y mostrar mensaje
+        return back()->with('success', 'Archivo subido correctamente: ' . $path);
     }
 
 

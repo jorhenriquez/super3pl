@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
              
-                <div class="mb-6 border border-gray-200 rounded-t-lg p-4 bg-gray-50">
+                <div class="border border-gray-200 rounded-t-lg p-4 bg-gray-50">
                     <h3 class="text-lg font-bold mb-4 text-gray-700">Datos del Pedido</h3>
                 
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-800">
@@ -68,10 +68,41 @@
                         </div>
                     </div>
                 </div>
-                
+                <!-- put here progress bar -->
+                @php
+                    $total = $pedido->lineas->sum('cantidad_total');
+                    $revisado = $pedido->lineas->sum('cantidad_revisada');
+                    $progress = $total > 0 ? round(($revisado / $total) * 100) : 0;
+                    if($progress < 0.5) {
+                        $color_fondo = 'bg-red-50';
+                        $color_borde = 'border-red-400';
+                        $color_barra = 'bg-red-400';
+                        $color_texto = 'text-red-800';
+                    } elseif($progress < 0.8) {
+                        $color_fondo = 'bg-yellow-50';
+                        $color_borde = 'border-yellow-400';
+                        $color_barra = 'bg-yellow-400';
+                        $color_texto = 'text-yellow-800';
+                    } else {
+                        $color_fondo = 'bg-green-50';
+                        $color_borde = 'border-green-400';
+                        $color_barra = 'bg-green-400';
+                        $color_texto = 'text-green-800';
+                    }
+
+                @endphp
+                <div class="mb-3">
+                    <div class="pt-3 pb-3 w-full {{ $color_fondo }} {{ $color_borde}} border-1">
+                        <div class="{{ $color_barra }} h-4" style="width: {{ $progress }}%">
+                            <span class="border-1 boder-grey-8000 justify-center pb-3 text-md font-medium {{ $color_texto }}">
+                                {{ $revisado }}/{{$total}}
+                            </span>
+                        </div>
+                     </div>
+                </div>
 
                 
-                <div class="p-6 text-gray-900">
+                <div class="pt-3 p-6 text-gray-900">
                     <!-- Inicio de Tabla -->
                     <div class="relative overflow-x-auto">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
