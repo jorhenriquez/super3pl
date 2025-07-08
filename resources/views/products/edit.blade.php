@@ -49,6 +49,26 @@
                         @enderror
                     </div>
 
+                    <div class="mb-4">
+                        <label for="peso" class="block text-gray-700 font-bold mb-2">Peso</label>
+                        <input type="text" name="peso" id="peso" 
+                               value="{{ old('peso', $producto->peso) }}" 
+                               class="border border-gray-300 rounded-md w-full px-3 py-2">
+                        @error('peso')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="volumen" class="block text-gray-700 font-bold mb-2">Volumen</label>
+                        <input type="text" name="volumen" id="volumen" 
+                               value="{{ old('volumen', $producto->volumen) }}" 
+                               class="border border-gray-300 rounded-md w-full px-3 py-2">
+                        @error('volumen')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div>
                         <button type="submit" 
                                 class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">

@@ -93,4 +93,16 @@ class ClienteController extends Controller
         return redirect()->route('clientes.index')
             ->with('success', 'Producto eliminado correctamente');
     }
+
+    public function seleccionar(Request $request)
+    {
+        $request->validate([
+            'cliente_id' => ['nullable', 'exists:clientes,id'],
+        ]);
+
+        session(['cliente_activo' => $request->cliente_id]);
+
+        return back();
+    }
+
 }

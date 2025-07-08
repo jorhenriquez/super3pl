@@ -26,6 +26,7 @@ class LineasDesdeExcelImport implements ToCollection, WithHeadingRow
                     'comuna' => $row['comuna'] ?? '',
                     'cantidad' => 0,
                     'estado_pedido_id' => 1,
+                    'cliente_id' => session('cliente_activo'), // Asocia el cliente activo
                 ]
             );
 

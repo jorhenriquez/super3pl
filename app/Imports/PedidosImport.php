@@ -18,6 +18,7 @@ class PedidosImport implements ToModel, WithHeadingRow
             'comuna' => $row['comuna'],
             'cantidad' => $row['cantidad'],
             'estado_pedido_id' => 1, // Por defecto estado 1 si no viene
+            'cliente_id' => session('cliente_activo'), // Asocia el cliente activo
         ]);
     }
 }

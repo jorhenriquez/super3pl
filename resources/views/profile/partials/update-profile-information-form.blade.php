@@ -47,6 +47,25 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="role" :value="__('Rol')" />
+
+            <select id="role" name="role" required class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                @php
+                    $roles = ['admin' => 'Administrador', 'lector' => 'Lector', 'operador' => 'Operador'];
+                @endphp
+
+                @foreach ($roles as $value => $label)
+                    <option value="{{ $value }}" {{ old('role', $user->role) === $value ? 'selected' : '' }}>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+
+            <x-input-error class="mt-2" :messages="$errors->get('role')" />
+        </div>
+
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

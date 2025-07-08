@@ -27,14 +27,6 @@
                             </button>
                         </form>
                     </div>
-
-                    <template x-if="mensaje">
-                        <div class="mb-4 p-3 rounded font-semibold"
-                             :class="status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                            <span x-text="mensaje"></span>
-                        </div>
-                    </template>
-
                     <div class="mt-6">
 
                         <div class="mt-6 overflow-x-auto">
@@ -55,7 +47,7 @@
                                                 'bg-white': linea.cantidad_revisada === 0
                                             }"
                                         >
-                                            <td class="px-4 py-2" x-text="linea.product.ean"></td>
+                                            <td class="px-4 py-2" x-text="linea.product.codigo"></td>
                                             <td class="px-4 py-2" x-text="linea.product.descripcion"></td>
                                             <td class="px-4 py-2" x-text="linea.cantidad_revisada"></td>
                                             <td class="px-4 py-2" x-text="linea.cantidad_total"></td>
@@ -125,7 +117,7 @@
                         }
 
                     } catch (error) {
-                        this.status = 'error';
+                        this.status = 'error_val';
                         this.mensaje = error.message || 'Ocurrió un error';
 
                         // 🔴 Reproducir sonido de error

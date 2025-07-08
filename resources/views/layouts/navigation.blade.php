@@ -17,6 +17,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
                 @auth
                     @if(auth()->user()->role === 'admin')
                         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -26,6 +27,7 @@
                         </div>
                     @endif
                 @endauth
+
                 @auth
                     @if(auth()->user()->role === 'admin')
                         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -35,6 +37,8 @@
                         </div>
                     @endif
                 @endauth
+
+
                 @can('admin')
                     <x-nav-link href="{{ route('errores.index') }}" :active="request()->routeIs('errores.index')">
                         {{ __('Errores de Validación') }}
@@ -50,17 +54,36 @@
                         </div>
                     @endif
                 @endauth
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('pedidos.index')" :active="request()->routeIs('pedidos.index')">
-                        {{ __('Pedidos') }}
-                    </x-nav-link>
-                </div>
+
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <x-nav-link :href="route('pedidos.index')" :active="request()->routeIs('pedidos.index')">
+                                {{ __('Pedidos') }}
+                            </x-nav-link>
+                        </div>
+                    @endif
+                @endauth
+
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('validacion.index')" :active="request()->routeIs('validacion.index')">
                         {{ __('Validacion') }}
                     </x-nav-link>
                 </div>
+                
             </div>
+
+            <form method="POST" action="{{ route('cliente.seleccionar') }}" class="ml-auto mr-4">
+                @csrf
+                <select class="inline-flex items-center px-1 pt-1 mt-4 text-gray-700 boder-gray-500 rounded text-sm" name="cliente_id" onchange="this.form.submit()" class="rounded border-gray-300">
+                    <option value="">Todos los clientes</option>
+                    @foreach (\App\Models\Cliente::all() as $cliente)
+                        <option value="{{ $cliente->id }}" {{ session('cliente_activo') == $cliente->id ? 'selected' : '' }}>
+                            {{ $cliente->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -116,26 +139,22 @@
             </x-responsive-nav-link>
         </div>
 
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('validacion.index')" :active="request()->routeIs('validacion.index')">
+                {{ __('Validacion') }}
+            </x-responsive-nav-link>
+        </div>
+
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Salir') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

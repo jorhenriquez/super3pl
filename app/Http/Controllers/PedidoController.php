@@ -45,6 +45,11 @@ class PedidoController extends Controller
             });
         }
 
+        // Filtro por usuario asignado
+        if (session('cliente_activo')) {
+            $query->where('cliente_id', session('cliente_activo'));
+        }
+
         $pedidos = $query->with('user', 'estado_pedido')
                             ->orderBy('idDestino')
                             ->orderBy('destino')
@@ -75,8 +80,16 @@ class PedidoController extends Controller
             'estado' => 'nullable',
         ]);
 
-        Pedido::create($request->only(['idDestino','referencia', 'destino', 'direccion', 'comuna', 'cantidad', 'estado']));
-
+        Pedido::create([
+            'referencia'        => $request->referencia,
+            'idDestino'         => $request->idDestino,
+            'destino'           => $request->destino,
+            'direccion'         => $request->direccion,
+            'comuna'            => $request->comuna,
+            'cantidad'          => $request->cantidad,
+            'estado_pedido_id'  => $request->estado,
+            'cliente_id'        => session('cliente_activo'), // Aquí se asocia el cliente activo
+        ]);
         return redirect()->route('pedidos.create')->with('success', 'Pedido creado correctamente.');
     }
 

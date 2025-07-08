@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
             'cod_meribia' => 886,
         ]);
 
-        $filePath = database_path('seeders/files/data_products.xlsx');
+        $filePath = database_path('seeders/files/data_products_v2.xlsx');
 
         if (file_exists($filePath)) {
             Excel::import(new ProductsImport, $filePath);

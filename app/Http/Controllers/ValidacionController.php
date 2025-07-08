@@ -117,7 +117,7 @@ class ValidacionController extends Controller
                 'mensaje_error' => 'Producto no encontrado.',
                 'error_type_id' => 1,
             ]);
-            return response()->json(['status' => 'error', 'message' => 'Producto no encontrado.'], 404);
+            return response()->json(['status' => 'error_val', 'message' => 'Producto no encontrado.'], 404);
         }
             
     
@@ -135,7 +135,7 @@ class ValidacionController extends Controller
             ]);
             
             return response()->json(
-                    ['status' => 'error',
+                    ['status' => 'error_val',
                     'message' => 'No existe este producto en este pedido o ya está completo.',
                     
                 ], 400);
@@ -147,7 +147,7 @@ class ValidacionController extends Controller
         $completas = $pedido->lineas()->whereColumn('cantidad_total', '>', 'cantidad_revisada')->count() === 0;
     
         return response()->json([
-                'status' => 'success',
+                'status' => 'success_val',
                 'message' => 'Producto validado correctamente',
                 'lineas_pedido' => $pedido->lineas()->with('product')->get(), // 👈 esto es clave
                 'last_validated_id' => $linea->id, // si quieres resaltar o mover
