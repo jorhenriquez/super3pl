@@ -96,7 +96,7 @@ class ValidacionController extends Controller
         $pedido->estado_pedido_id = $estado->id;
         $pedido->save();
     
-        return redirect()->route('pedidos.index')->with('status', 'El pedido fue validado y finalizado exitosamente.');
+        return redirect()->route('validacion.index')->with('status', 'El pedido fue validado y finalizado exitosamente.');
     }
     
     public function validarProducto(Request $request, Pedido $pedido)
