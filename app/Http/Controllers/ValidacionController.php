@@ -92,7 +92,7 @@ class ValidacionController extends Controller
             return redirect()->back()->with('error', 'No puedes finalizar: hay productos sin revisar completamente.');
         }
     
-        $estado = EstadoPedido::where('nombre', 'Finalizado')->first();
+        $estado = EstadoPedido::where('nombre', 'Revisado')->first();
         $pedido->estado_pedido_id = $estado->id;
         $pedido->save();
     
