@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     //Route::post('/validacion/{pedido}', [ValidacionController::class, 'procesar'])->name('validacion.procesar');
     Route::patch('/validacion/{pedido}/finalizar', [ValidacionController::class, 'finalizar'])->name('validacion.finalizar');
         Route::post('/seleccionar-cliente', [ClienteController::class, 'seleccionar'])->name('cliente.seleccionar');
-
+    Route::put('/pedidos/{pedido}/finalizar', [PedidoController::class, 'finalizar'])->name('pedidos.finalizar');
 });
 
 require __DIR__.'/auth.php';

@@ -1,12 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pedidos') }}:{{$pedido->referencia}}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Pedidos') }}: {{$pedido->referencia}}
+            </h2>
+            @if($pedido->estado_pedido->nombre == 'En revision')
+                <form method="POST" action="{{ route('pedidos.finalizar', $pedido) }}">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-white text-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        Finalizar
+                    </button>
+                </form>
+            @endif
+        </div>
     </x-slot>
 
+
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
              
                 <div class="border border-gray-200 rounded-t-lg p-4 bg-gray-50">
@@ -46,6 +59,10 @@
                                             </span>
                                         @elseif($pedido->estado_pedido->nombre == 'Revisado')
                                             <span class="bg-green-100 text-green-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
+                                                {{$pedido->estado_pedido->nombre}}
+                                            </span>
+                                        @elseif($pedido->estado_pedido->nombre == 'Observaciones')
+                                            <span class="bg-orange-100 text-orange-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
                                                 {{$pedido->estado_pedido->nombre}}
                                             </span>
                                         @elseif($pedido->estado_pedido->nombre == 'Anulado')

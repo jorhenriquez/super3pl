@@ -18,6 +18,7 @@
                         'En revision' => 'bg-yellow-50',
                         'Asignado' => 'bg-blue-50',
                         'Revisado' => 'bg-green-50',
+                        'Observaciones' => 'bg-orange-50',
                         'Anulado' => 'bg-red-50',
                         default => 'bg-white',
                     };

@@ -16,14 +16,15 @@ return new class extends Migration
         });
     }
 
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::table('pedidos', function (Blueprint $table) {
-            //
+            $table->dropForeign(['cliente_id']);
+            $table->dropColumn('cliente_id');
         });
     }
 };
+

@@ -80,6 +80,7 @@ class DatabaseSeeder extends Seeder
         EstadoPedido::create(['nombre' => 'Asignado']);
         EstadoPedido::create(['nombre' => 'En revision']);
         EstadoPedido::create(['nombre' => 'Revisado']);
+        EstadoPedido::create(['nombre' => 'Observaciones']);
         EstadoPedido::create(['nombre' => 'Anulado']);
         /*
         $lineasFile = database_path('seeders/files/data_lineas.xlsx');

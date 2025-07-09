@@ -189,7 +189,8 @@ class PedidoController extends Controller
     public function reasignar(Pedido $pedido)
     {
         if ($pedido->estado_pedido->nombre == "En revision") {
-            $pedido->estado_pedido_id = 2; // Estado "Asignado"
+            $estado = EstadoPedido::where('nombre', 'Asignado')->first();
+            $pedido->estado_pedido_id = $estado->id;
             foreach($pedido->lineas as $linea){
                 $linea->cantidad_revisada = 0;
                 $linea->save();
@@ -230,6 +231,20 @@ class PedidoController extends Controller
         // Aquí puedes usar Laravel Excel o PHP para procesar el archivo
         // Ejemplo simple: solo guardar el archivo y mostrar mensaje
         return back()->with('success', 'Archivo subido correctamente: ' . $path);
+    }
+
+    public function finalizar(Pedido $pedido)
+    {
+        $estado = EstadoPedido::where('nombre', 'Observaciones')->first();
+
+        if (!$estado) {
+            return redirect()->back()->with('error', 'Estado "Observaciones" no existe.');
+        }
+
+        $pedido->estado_pedido_id = $estado->id;
+        $pedido->save();
+
+        return redirect()->route('pedidos.show', $pedido)->with('success', 'Pedido finalizado con observaciones.');
     }
 
 
