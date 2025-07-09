@@ -25,18 +25,41 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::create([
-            'name' => 'Jorge',
+            'name' => 'Jorge Henriquez',
             'email' => 'jhenriquez@supertrans.cl',
             'password' => bcrypt('12345678'),
             'role' => 'admin'
         ]);
 
         User::create([
-            'name' => 'Camila',
-            'email' => 'chenriquez@supertrans.cl',
+            'name' => 'Lilian Caro',
+            'email' => 'lcaro@supertrans.cl',
+            'password' => bcrypt('12345678'),
+            'role' => 'admin'
+        ]);
+
+        User::create([
+            'name' => 'Daniel Erices',
+            'email' => 'pepsicocpp@supertrans.cl',
+            'password' => bcrypt('12345678'),
+            'role' => 'admin'
+        ]);
+
+        User::create([
+            'name' => 'James Rodriguez',
+            'email' => 'james-cero@hotmail.com',
             'password' => bcrypt('12345678'),
             'role' => 'operador'
         ]);
+
+        User::create([
+            'name' => 'Cristian Arteaga',
+            'email' => 'arte.cristianarteaga@gmail.com',
+            'password' => bcrypt('12345678'),
+            'role' => 'operador'
+        ]);
+
+        
 
         Cliente::create([
             'nombre' => 'Evercrisp Snacks S.A.',
