@@ -39,14 +39,13 @@
                                 </a> 
                             @elseif(isset($headers[$index]) && strtolower($headers[$index]) === 'estado')
                                 <x-estado-badge :estado="data_get($row, $field)" />
+                            @elseif(isset($headers[$index]) && strtolower($headers[$index]) === 'acciones')
+                                <x-acciones :row="$row" />
                             @else
                                 {{ data_get($row, $field) }}
                             @endif
                         </td>
                     @endforeach
-                        <td class="px-6 py-4">
-                            <x-acciones :row="$row" />
-                        </td>
                 </tr>
             @endforeach
         </tbody>

@@ -11,6 +11,12 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#1a56db">
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -36,5 +42,12 @@
             </div>
     </div>
     
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+            .then(function() { console.log("Service Worker registrado"); });
+        }
+    </script>
+
     </body>
 </html>

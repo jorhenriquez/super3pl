@@ -12,7 +12,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ValidacionController;
 use App\Http\Controllers\ProductImportController;
 use App\Http\Controllers\PedidoImportController;
+use App\Http\Controllers\LineasPedidoController;
 use App\Http\Controllers\RegistroErrorValidacionController;
+use App\Http\Controllers\DashboardController;
 
 
 
@@ -36,6 +38,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('pedidos/{pedido}/reasignar', [PedidoController::class, 'reasignar'])->name('pedidos.reasignar');
     Route::patch('pedidos/{pedido}/quitar-usuario', [PedidoController::class, 'quitarUsuario'])->name('pedidos.quitarUsuario');
     Route::get('errores-validacion', [RegistroErrorValidacionController::class, 'index'])->name('errores.index');
+    Route::put('/lineas/{linea}/observacion', [LineasPedidoController::class, 'guardarObservacion'])->name('lineas.observacion');
+    Route::get('/dashboard/resumen', [DashboardController::class, 'resumen'])->name('dashboard.resumen');
 });
 
 Route::middleware(['auth', 'role:admin,user'])->group(function () {

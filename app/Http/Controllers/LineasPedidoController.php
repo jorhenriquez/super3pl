@@ -62,4 +62,17 @@ class LineasPedidoController extends Controller
     {
         //
     }
+
+    public function guardarObservacion(Request $request, LineasPedido $linea)
+    {
+        $request->validate([
+            'observaciones' => 'nullable|string|max:1000',
+        ]);
+
+        $linea->observaciones = $request->observaciones;
+        $linea->save();
+
+        return redirect()->back()->with('success', 'Observación guardada correctamente.');
+    }
+
 }

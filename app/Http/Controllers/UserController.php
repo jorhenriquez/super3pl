@@ -48,7 +48,11 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('users.show', compact('user'));
+
+        // Paginar los pedidos del usuario
+        $pedidos = $user->pedidos()->paginate(10); // o el número que quieras
+
+        return view('users.show', compact('user', 'pedidos'));
     }
 
     /**

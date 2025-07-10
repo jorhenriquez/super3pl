@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LineasPedido extends Model
 {
-    protected $fillable = ['pedido_id','product_id','cantidad_total','cantidad_revisada','cantidad_asignada_manual'];
+    protected $fillable = ['pedido_id','product_id','cantidad_total','cantidad_revisada','cantidad_asignada_manual','observaciones'];
       
     public function pedido()
     {

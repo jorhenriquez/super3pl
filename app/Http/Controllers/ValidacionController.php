@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Pedido;
 use App\Models\Product;
+use Illuminate\Support\Str;
 use App\Models\EstadoPedido;
 use App\Models\LineasPedido;
 use Illuminate\Http\Request;
+use App\Models\HistorialPedido;
 use App\Models\ErroresValidacion;
 use Illuminate\Support\Facades\Auth;
 use App\Models\RegistroErrorValidacion;
-use Illuminate\Support\Str;
 
 
 class ValidacionController extends Controller
@@ -111,14 +112,9 @@ class ValidacionController extends Controller
             ->first();
     
         if (!$producto) {
-            RegistroErrorValidacion::create([
-                'user_id' => Auth::id(),
-                'pedido_id' => $pedido->id,
-                'codigo_ingresado' => $codigo,
-                'mensaje_error' => 'Producto no encontrado.',
-                'error_type_id' => 1,
-            ]);
-            return response()->json(['status' => 'error_val', 'message' => 'Producto no encontrado.'], 404);
+            $mensaje = 'Producto no encontrado';
+
+            return response()->json(['status' => 'error_val', 'message' => $mensaje], 404);
         }
             
     

@@ -30,6 +30,10 @@ class Pedido extends Model
         return $this->belongsTo(Cliente::class);
     }
 
+    public function historial()
+    {
+        return $this->hasMany(HistorialPedido::class)->latest();
+    }
 
 
 }

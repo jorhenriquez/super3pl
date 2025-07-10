@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Pedido;
 use App\Models\EstadoPedido;
 use Illuminate\Http\Request;
+use App\Models\HistorialPedido;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +26,7 @@ class PedidoController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        // Filtro de búsqueda
+        // Filtro de búsqueda libre
         if ($request->filled('search_pedido')) {
             $search = $request->input('search_pedido');
             $query->where(function($q) use ($search) {
@@ -33,35 +34,42 @@ class PedidoController extends Controller
                 ->orWhere('destino', 'like', "%{$search}%")
                 ->orWhere('direccion', 'like', "%{$search}%")
                 ->orWhere('comuna', 'like', "%{$search}%")
-                ->orWhere('cantidad', 'like', "%{$search}%");
+                ->orWhere('cantidad', 'like', "%{$search}%")
+                ->orWhereHas('estado_pedido', fn($subQ) => 
+                        $subQ->where('nombre', 'like', "%{$search}%"));
             });
         }
 
-        // Filtro de estado_pedido (puede ser array)
-        $estados = $request->input('estado_pedido');
-        if ($estados) {
-            $query->whereHas('estado_pedido', function($q) use ($estados) {
-                $q->whereIn('nombre', (array)$estados);
-            });
+        // Filtro por fecha de creación exacta
+        if ($request->filled('fecha')) {
+            $query->whereDate('created_at', $request->fecha);
         }
 
-        // Filtro por usuario asignado
+        // Filtro por nombre de estado
+        if ($request->filled('estado')) {
+            $query->whereHas('estado_pedido', fn($q) =>
+                $q->where('nombre', $request->estado)
+            );
+        }
+
+        // Filtro por cliente si está activo en la sesión
         if (session('cliente_activo')) {
             $query->where('cliente_id', session('cliente_activo'));
         }
 
-        $pedidos = $query->with('user', 'estado_pedido')
-                            ->orderBy('idDestino')
-                            ->orderBy('destino')
-                            ->orderByDesc('cantidad')
-                            ->paginate(10)
-                            ->withQueryString();
+        // Obtener los pedidos filtrados
+        $pedidos = $query->with(['user', 'estado_pedido'])
+                        ->orderBy('idDestino')
+                        ->orderBy('destino')
+                        ->orderByDesc('cantidad')
+                        ->paginate(10)
+                        ->withQueryString(); // mantiene los filtros en la paginación
 
-        $estadosDisponibles = EstadoPedido::orderBy('nombre')->pluck('nombre');
-        return view('pedidos.index', compact('pedidos', 'estadosDisponibles'));
+        // Obtener lista de estados para el select
+        $estados = EstadoPedido::orderBy('nombre')->pluck('nombre');
 
+        return view('pedidos.index', compact('pedidos', 'estados'));
     }
-
 
     public function create()
     {
@@ -80,7 +88,7 @@ class PedidoController extends Controller
             'estado' => 'nullable',
         ]);
 
-        Pedido::create([
+        $pedido = Pedido::create([
             'referencia'        => $request->referencia,
             'idDestino'         => $request->idDestino,
             'destino'           => $request->destino,
@@ -90,6 +98,8 @@ class PedidoController extends Controller
             'estado_pedido_id'  => $request->estado,
             'cliente_id'        => session('cliente_activo'), // Aquí se asocia el cliente activo
         ]);
+
+
         return redirect()->route('pedidos.create')->with('success', 'Pedido creado correctamente.');
     }
 
@@ -175,6 +185,7 @@ class PedidoController extends Controller
         $pedido->estado_pedido_id++;
         $pedido->save();
 
+
         // Preserve search_pedido if present
         $search = request()->input('search_pedido');
         $params = [];
@@ -191,6 +202,7 @@ class PedidoController extends Controller
         if ($pedido->estado_pedido->nombre == "En revision") {
             $estado = EstadoPedido::where('nombre', 'Asignado')->first();
             $pedido->estado_pedido_id = $estado->id;
+
             foreach($pedido->lineas as $linea){
                 $linea->cantidad_revisada = 0;
                 $linea->save();
@@ -209,7 +221,7 @@ class PedidoController extends Controller
             $pedido->user_id = null;
             $pedido->estado_pedido_id = 1;
             $pedido->save();
-
+            
             return redirect()->back()->with('status', 'Usuario eliminado del pedido.');
         }
 
@@ -235,6 +247,17 @@ class PedidoController extends Controller
 
     public function finalizar(Pedido $pedido)
     {
+        foreach ($pedido->lineas as $linea) {
+            $cantidadTotal = $linea->cantidad_total;
+            $cantidadRevisada = $linea->cantidad_revisada;
+            $observacion = trim($linea->observaciones ?? '');
+
+            if ($cantidadRevisada < $cantidadTotal && empty($observacion)) {
+                
+                return redirect()->back()->with('error', "La línea del producto '{$linea->product->descripcion}' tiene diferencia de cantidades sin observación.");
+            }
+        }
+
         $estado = EstadoPedido::where('nombre', 'Observaciones')->first();
 
         if (!$estado) {
