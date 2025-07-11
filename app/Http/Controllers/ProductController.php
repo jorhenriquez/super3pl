@@ -25,9 +25,14 @@ class ProductController extends Controller
             });
         }
 
+        // Ordenar para que los productos sin EAN aparezcan primero
+        $query->orderByRaw('CASE WHEN ean IS NULL OR ean = "" THEN 0 ELSE 1 END');
+
         $productos = $query->paginate(10)->withQueryString();
+
         return view('products.index', compact('productos'));
     }
+
 
     public function create()
     {
