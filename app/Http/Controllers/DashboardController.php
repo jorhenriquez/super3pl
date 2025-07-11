@@ -71,6 +71,8 @@ class DashboardController extends Controller
 
         $productosObservados = collect();
 
+        $productosObservados = collect();
+
         if ($estadoObservaciones) {
             $productosObservados = Pedido::with(['lineas.product'])
                 ->where('estado_pedido_id', $estadoObservaciones->id)
@@ -87,8 +89,13 @@ class DashboardController extends Controller
                             'producto_id' => optional($linea->product)->id,
                         ];
                     });
-                })->filter(fn($item) => $item['producto_id']); // quita líneas sin producto
+                })->filter(function ($item) {
+                    return $item['producto_id'] &&
+                        !is_null($item['observaciones']) &&
+                        trim($item['observaciones']) !== '';
+                });
         }
+
 
         return view('dashboard.resumen-tabla', [
             'tabla' => $tabla,
