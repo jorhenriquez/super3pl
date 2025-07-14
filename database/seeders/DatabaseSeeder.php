@@ -92,6 +92,9 @@ class DatabaseSeeder extends Seeder
             $this->command->warn('Archivo de líneas no encontrado.');
         }
             */
+
+        $this->call(MotivoObservacionSeeder::class);
+
             
     }
 }

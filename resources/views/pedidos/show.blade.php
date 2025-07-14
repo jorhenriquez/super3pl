@@ -17,6 +17,10 @@
         </div>
     </x-slot>
 
+    @php
+        $motivos = \App\Models\MotivoObservacion::all();
+    @endphp
+
     <div class="py-12" x-data="modalObservacion()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -119,15 +123,24 @@
                                             <td class="px-6 py-4">{{$linea->cantidad_total}}</td>
                                             <td class="px-6 py-4">{{$linea->cantidad_revisada}}</td>
                                             <td class="px-6 py-4">
-                                                @if($linea->cantidad_revisada < $linea->cantidad_total && empty($linea->observaciones))
+                                                @if(
+                                                    $pedido->estado_pedido->nombre === 'En revision' &&
+                                                    $linea->cantidad_revisada < $linea->cantidad_total &&
+                                                    empty($linea->observaciones)
+                                                )
                                                     <button
                                                         @click="openModal({{ $linea->id }}, '{{ addslashes($linea->product->descripcion) }}', '{{ addslashes($linea->observaciones) }}')"
                                                         class="text-blue-600 hover:underline">
                                                         Agregar
                                                     </button>
+
                                                 @elseif(!empty($linea->observaciones))
                                                     <button
-                                                        @click="openReadOnlyModal('{{ addslashes($linea->product->descripcion) }}', '{{ addslashes($linea->observaciones) }}')"
+                                                        @click="openReadOnlyModal(
+                                                            '{{ addslashes($linea->product->descripcion) }}',
+                                                            '{{ addslashes($linea->observaciones) }}',
+                                                            '{{ $linea->motivoObservacion->nombre ?? '' }}'
+                                                        )"
                                                         class="text-gray-700 underline hover:text-gray-900">
                                                         Ver
                                                     </button>
@@ -152,20 +165,28 @@
                 </div>
 
                 <!-- MODAL AGREGAR OBSERVACION -->
-                <div
-                    x-show="show"
-                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                    style="display: none;"
-                >
+                <div x-show="show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
                     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                         <h3 class="text-lg font-semibold mb-4 text-gray-700">Agregar observación</h3>
                         <p class="text-sm text-gray-600 mb-2">Producto: <span x-text="producto" class="font-medium text-gray-800"></span></p>
                         <form method="POST" :action="`/lineas/${lineaId}/observacion`">
                             @csrf
                             @method('PUT')
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700">Motivo</label>
+                                <select name="motivo_observacion_id" required class="w-full border border-gray-300 rounded-md p-2">
+                                    <option value="">Seleccione un motivo</option>
+                                    @foreach ($motivos as $motivo)
+                                        <option value="{{ $motivo->id }}">{{ $motivo->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <textarea x-model="observacion" name="observaciones" rows="4"
                                 class="w-full border border-gray-300 rounded-md p-2 mb-4"
                                 placeholder="Escribe la observación..."></textarea>
+
                             <div class="flex justify-end space-x-2">
                                 <button type="button" @click="show = false"
                                     class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">
@@ -181,14 +202,11 @@
                 </div>
 
                 <!-- MODAL VER OBSERVACION -->
-                <div
-                    x-show="showReadOnly"
-                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                    style="display: none;"
-                >
+                <div x-show="showReadOnly" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
                     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                         <h3 class="text-lg font-semibold mb-4 text-gray-700">Observación existente</h3>
                         <p class="text-sm text-gray-600 mb-2">Producto: <span x-text="producto" class="font-medium text-gray-800"></span></p>
+                        <p class="text-sm text-gray-600 mb-2">Motivo: <span x-text="motivo" class="font-medium text-gray-800"></span></p>
                         <div class="bg-gray-100 border border-gray-300 rounded-md p-3 text-gray-800 mb-4 whitespace-pre-wrap" x-text="observacion"></div>
                         <div class="flex justify-end">
                             <button @click="showReadOnly = false"
@@ -207,10 +225,11 @@
         function modalObservacion() {
             return {
                 show: false,
+                showReadOnly: false,
                 lineaId: null,
                 producto: '',
                 observacion: '',
-                showReadOnly: false,
+                motivo: '',
 
                 openModal(id, producto, obs) {
                     this.lineaId = id;
@@ -218,9 +237,10 @@
                     this.observacion = obs ?? '';
                     this.show = true;
                 },
-                openReadOnlyModal(producto, obs) {
+                openReadOnlyModal(producto, obs, motivo = '') {
                     this.producto = producto;
                     this.observacion = obs;
+                    this.motivo = motivo;
                     this.showReadOnly = true;
                 }
             }

@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('lineas_pedidos', function (Blueprint $table) {
-            $table->text('observaciones')->nullable()->after('cantidad'); // o el campo que desees
+        Schema::create('motivo_observacions', function (Blueprint $table) {
+            $table->id();
+            $table->string('nombre');
+            $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('lineas_pedidos', function (Blueprint $table) {
-            $table->dropColumn('observaciones');
-        });
+        Schema::dropIfExists('motivo_observacions');
     }
-
 };

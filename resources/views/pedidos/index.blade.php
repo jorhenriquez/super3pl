@@ -13,7 +13,6 @@
                     <!-- Filtros y botón Importar -->
                     <form method="GET" action="{{ route('pedidos.index') }}" class="mb-6">
                         <div class="flex flex-wrap items-end justify-between gap-4 w-full">
-
                             <!-- Filtros y acciones -->
                             <div class="flex flex-wrap items-end gap-4">
                                 <!-- Buscador -->

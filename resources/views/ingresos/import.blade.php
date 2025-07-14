@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Importar Pedidos') }}
+            {{ __('Importar Ingresos') }}
         </h2>
     </x-slot>
 
@@ -19,7 +19,7 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('pedidos.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('ingresos.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-4">
                     <label class="block mb-2 font-semibold">Archivo Excel o CSV</label>

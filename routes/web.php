@@ -15,6 +15,8 @@ use App\Http\Controllers\PedidoImportController;
 use App\Http\Controllers\LineasPedidoController;
 use App\Http\Controllers\RegistroErrorValidacionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\IngresoController;
+use App\Http\Controllers\IngresoImportController;
 
 
 
@@ -24,6 +26,9 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    
+    Route::get('ingresos/import', [IngresoImportController::class, 'show'])->name('ingresos.import.form');
+    Route::post('ingresos/import', [IngresoImportController::class, 'import'])->name('ingresos.import');
     Route::get('products/import', [ProductImportController::class, 'show'])->name('products.import.form');
     Route::post('products/import', [ProductImportController::class, 'import'])->name('products.import');
     Route::get('pedidos/import', [PedidoImportController::class, 'show'])->name('pedidos.import.form');
@@ -40,6 +45,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('errores-validacion', [RegistroErrorValidacionController::class, 'index'])->name('errores.index');
     Route::put('/lineas/{linea}/observacion', [LineasPedidoController::class, 'guardarObservacion'])->name('lineas.observacion');
     Route::get('/dashboard/resumen', [DashboardController::class, 'resumen'])->name('dashboard.resumen');
+    Route::resource(('ingresos'), IngresoController::class);
 });
 
 Route::middleware(['auth', 'role:admin,user'])->group(function () {

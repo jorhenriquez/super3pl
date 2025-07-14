@@ -36,14 +36,13 @@ class PedidoController extends Controller
                 ->orWhere('comuna', 'like', "%{$search}%")
                 ->orWhere('cantidad', 'like', "%{$search}%")
                 ->orWhereHas('estado_pedido', fn($subQ) => 
-                        $subQ->where('nombre', 'like', "%{$search}%"));
+                    $subQ->where('nombre', 'like', "%{$search}%"));
             });
         }
 
-        // Filtro por fecha de creación exacta
-        if ($request->filled('fecha')) {
-            $query->whereDate('created_at', $request->fecha);
-        }
+        // Usar fecha actual si no viene fecha
+        $fecha = $request->input('fecha') ?? now()->toDateString();
+        $query->whereDate('created_at', $fecha);
 
         // Filtro por nombre de estado
         if ($request->filled('estado')) {
@@ -57,21 +56,20 @@ class PedidoController extends Controller
             $query->where('cliente_id', session('cliente_activo'));
         }
 
-        // Obtener los pedidos filtrados
         $pedidos = $query->with(['user', 'estado_pedido'])
                         ->orderBy('idDestino')
                         ->orderBy('destino')
                         ->orderByDesc('cantidad')
                         ->paginate(10)
-                        ->withQueryString(); // mantiene los filtros en la paginación
+                        ->withQueryString();
 
-        // Obtener lista de estados para el select
         $estados = EstadoPedido::orderBy('nombre')->pluck('nombre');
 
         return view('pedidos.index', compact('pedidos', 'estados'));
     }
 
-    public function create()
+    
+     public function create()
     {
         return view('pedidos.create');
     }

@@ -17,4 +17,10 @@ class LineasPedido extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function motivoObservacion()
+    {
+        return $this->belongsTo(MotivoObservacion::class, 'motivo_observacion_id');
+    }
+
 }

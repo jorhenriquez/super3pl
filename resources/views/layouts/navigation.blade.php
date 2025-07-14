@@ -65,6 +65,16 @@
                     @endif
                 @endauth
 
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <x-nav-link :href="route('ingresos.index')" :active="request()->routeIs('ingresos.index')">
+                                {{ __('Ingresos') }}
+                            </x-nav-link>
+                        </div>
+                    @endif
+                @endauth
+
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('validacion.index')" :active="request()->routeIs('validacion.index')">
                         {{ __('Validacion') }}
@@ -73,7 +83,7 @@
                 
             </div>
 
-            <form method="POST" action="{{ route('cliente.seleccionar') }}" class="ml-auto mr-4">
+            {{--<form method="POST" action="{{ route('cliente.seleccionar') }}" class="ml-auto mr-4">
                 @csrf
                 <select class="inline-flex items-center px-1 pt-1 mt-4 text-gray-700 boder-gray-500 rounded text-sm" name="cliente_id" onchange="this.form.submit()" class="rounded border-gray-300">
                     <option value="">Todos los clientes</option>
@@ -83,7 +93,7 @@
                         </option>
                     @endforeach
                 </select>
-            </form>
+            </form>--}}
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
