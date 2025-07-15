@@ -24,14 +24,22 @@
                     };
                 @endphp
                 <tr class="{{ $bg }} border-b border-gray-200">
+               
                     @foreach($fields as $index => $field)
                         <td class="px-6 py-4">
-                            
                             @if(isset($headers[$index]) && strtolower($headers[$index]) === 'referencia')
-                                <a href="{{ route('pedidos.show', $row->id) }}" 
-                                        class="text-blue-600 hover:underline">
-                                        {{ data_get($row, $field) }}
-                                </a> 
+                                @if (request()->routeIs('pedidos.*'))
+                                        <a href="{{ route('pedidos.show', $row->id) }}" 
+                                                class="text-blue-600 hover:underline">
+                                                {{ data_get($row, $field) }}
+                                        </a> 
+                                @elseif (request()->routeIs('ingresos.*'))
+                                        <a href="{{ route('ingresos.show', $row->id) }}" 
+                                                class="text-blue-600 hover:underline">
+                                                {{ data_get($row, $field) }}
+                                        </a> 
+                                @endif
+            
                             @elseif($row->user && isset($headers[$index]) && strtolower($headers[$index]) === 'asignacion') 
                                 <a href="{{ route('users.show', $row->user->id) }}" 
                                         class="text-blue-600 hover:underline">
@@ -40,7 +48,12 @@
                             @elseif(isset($headers[$index]) && strtolower($headers[$index]) === 'estado')
                                 <x-estado-badge :estado="data_get($row, $field)" />
                             @elseif(isset($headers[$index]) && strtolower($headers[$index]) === 'acciones')
-                                <x-acciones :row="$row" />
+                                @if (request()->routeIs('pedidos.*'))
+                                        <x-acciones :row="$row" />
+                                @elseif (request()->routeIs('ingresos.*'))
+                                        <x-accionesi :row="$row" />
+                                @endif
+            
                             @else
                                 {{ data_get($row, $field) }}
                             @endif

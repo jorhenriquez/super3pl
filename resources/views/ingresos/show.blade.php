@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pedidos') }}:{{$pedido->referencia}}
+            {{ __('Pedidos') }}:{{$ingreso->referencia}}
         </h2>
     </x-slot>
 
@@ -16,50 +16,39 @@
                         
                         <div>
                             <div class="font-semibold text-gray-700">Referencia</div>
-                            <div>{{ $pedido->referencia }}</div>
+                            <div>{{ $ingreso->referencia }}</div>
                         </div>
-                        <div>
-                            <div class="font-semibold text-gray-700">Destino</div>
-                            <div>{{ $pedido->destino }}</div>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-gray-700">Dirección</div>
-                            <div>{{ $pedido->direccion }}</div>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-gray-700">Comuna</div>
-                            <div>{{ $pedido->comuna }}</div>
-                        </div>
+                        
                         <div>
                             <div class="font-semibold text-gray-700">Estado</div>
-                            @if($pedido->estado_pedido->nombre == 'Creado')
+                            @if($ingreso->estado_pedido->nombre == 'Creado')
                                             <span class="bg-gray-100 text-gray-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
-                                                {{$pedido->estado_pedido->nombre}}
+                                                {{$ingreso->estado_pedido->nombre}}
                                             </span>
-                                            @elseif($pedido->estado_pedido->nombre == 'En revision')
+                                            @elseif($ingreso->estado_pedido->nombre == 'En revision')
                                             <span class="bg-yellow-100 text-yellow-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
-                                                {{$pedido->estado_pedido->nombre}}
+                                                {{$ingreso->estado_pedido->nombre}}
                                             </span>
-                                        @elseif($pedido->estado_pedido->nombre == 'Asignado')
+                                        @elseif($ingreso->estado_pedido->nombre == 'Asignado')
                                         <span class="bg-blue-100 text-blue-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
-                                                {{$pedido->estado_pedido->nombre}}
+                                                {{$ingreso->estado_pedido->nombre}}
                                             </span>
-                                        @elseif($pedido->estado_pedido->nombre == 'Revisado')
+                                        @elseif($ingreso->estado_pedido->nombre == 'Revisado')
                                             <span class="bg-green-100 text-green-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
-                                                {{$pedido->estado_pedido->nombre}}
+                                                {{$ingreso->estado_pedido->nombre}}
                                             </span>
-                                        @elseif($pedido->estado_pedido->nombre == 'Anulado')
+                                        @elseif($ingreso->estado_pedido->nombre == 'Anulado')
                                             <span class="bg-red-100 text-red-800 text-xs p-2 font-medium me-2 px-2.5 py-0.5 rounded-full">
-                                                {{$pedido->estado_pedido->nombre}}
+                                                {{$ingreso->estado_pedido->nombre}}
                                             </span>
                                         @endif
                         </div>
                         <div>
                             <div class="font-semibold text-gray-700">Usuario</div>
                             <div>
-                                @if ($pedido->user)
-                                    <a href="{{ route('users.show', $pedido->user->id) }}" class="text-blue-600 hover:underline">
-                                        {{ $pedido->user->name }}
+                                @if ($ingreso->user)
+                                    <a href="{{ route('users.show', $ingreso->user->id) }}" class="text-blue-600 hover:underline">
+                                        {{ $ingreso->user->name }}
                                     </a>
                                 @else
                                     <span class="text-gray-500">No asignado</span>
@@ -70,8 +59,8 @@
                 </div>
                 <!-- put here progress bar -->
                 @php
-                    $total = $pedido->lineas->sum('cantidad_total');
-                    $revisado = $pedido->lineas->sum('cantidad_revisada');
+                    $total = $ingreso->lineas->sum('cantidad_total');
+                    $revisado = $ingreso->lineas->sum('cantidad_valida');
                     $progress = $total > 0 ? round(($revisado / $total) * 100) : 0;
                     if($progress < 0.5) {
                         $color_fondo = 'bg-red-50';
@@ -116,7 +105,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($pedido->lineas as $linea)
+                                @foreach($ingreso->lineas as $linea)
                                 <tr class="bg-white border-b border-gray-200">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         {{$linea->id}}
@@ -131,7 +120,7 @@
                                         {{$linea->cantidad_total}}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{$linea->cantidad_revisada}}
+                                        {{$linea->cantidad_valida}}
                                     </td>
                     
                                 </tr>

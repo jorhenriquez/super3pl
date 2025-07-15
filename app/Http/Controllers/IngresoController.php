@@ -56,8 +56,6 @@ class IngresoController extends Controller
         }
 
         $ingresos = $query->with(['user', 'estado_pedido'])
-                        ->orderBy('idDestino')
-                        ->orderBy('destino')
                         ->orderByDesc('cantidad')
                         ->paginate(10)
                         ->withQueryString();
@@ -88,7 +86,8 @@ class IngresoController extends Controller
      */
     public function show(Ingreso $ingreso)
     {
-        //
+        $ingreso->load(['user', 'lineas.product']); // carga relaciones necesarias
+        return view('ingresos.show', compact('ingreso'));
     }
 
     /**
@@ -113,5 +112,110 @@ class IngresoController extends Controller
     public function destroy(Ingreso $ingreso)
     {
         //
+    }
+
+    public function assign(Request $request, Pedido $pedido)
+    {
+        $search = $request->input('search');
+
+        $usuarios = User::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        })->paginate(10)->withQueryString();
+
+        return view('ingresos.assign', compact('pedido', 'usuarios', 'search'));
+    }
+
+    public function updateAssign(Request $request, Ingreso $ingreso)
+    {
+        $request->validate([
+            'usuario_id' => 'required|exists:users,id',
+        ]);
+
+        $ingreso->user_id = $request->usuario_id;
+        $ingreso->save();
+
+        // Preserve search_pedido if present
+        $search = $request->input('search_ingreso');
+        $params = [];
+        if ($search) {
+            $params['search_ingreso'] = $search;
+        }
+
+        return redirect()->route('ingresos.index', $params)
+            ->with('success', 'Usuario asignado correctamente');
+    }
+
+    public function upEstado(Ingreso $ingreso)
+    {
+        $ingreso->estado_pedido_id = 2;
+        $ingreso->save();
+
+
+        // Preserve search_pedido if present
+        $search = request()->input('search_ingreso');
+        $params = [];
+        if ($search) {
+            $params['search_ingreso'] = $search;
+        }
+
+        return redirect()->route('ingresos.index', $params)
+            ->with('success', 'Ingreso actualizado correctamente');
+    }
+
+    public function reasignar(Ingreso $ingreso)
+    {
+        if ($ingreso->estado_pedido->nombre == "En revision") {
+            $estado = EstadoPedido::where('nombre', 'Asignado')->first();
+            $ingreso->estado_pedido_id = $estado->id;
+
+            foreach($ingreso->lineas as $linea){
+                $linea->cantidad_revisada = 0;
+                $linea->save();
+            }
+            $ingreso->save();
+
+            return redirect()->back()->with('status', 'Ingreso devuelto a estado Asignado.');
+        }
+
+        return redirect()->back()->with('error', 'El ingreso no está en estado válido para reasignar.');
+    }
+
+    public function quitarUsuario(Ingreso $ingreso)
+    {
+        if ($ingreso->estado_pedido->nombre == "Asignado" && $ingreso->user_id) {
+            $ingreso->user_id = null;
+            $ingreso->estado_pedido_id = 1;
+            $ingreso->save();
+            
+            return redirect()->back()->with('status', 'Usuario eliminado del ingreso.');
+        }
+
+        return redirect()->back()->with('error', 'No se puede eliminar el usuario en este estado.');
+    }
+
+    public function finalizar(Ingreso $ingreso)
+    {
+        foreach ($ingreso->lineas as $linea) {
+            $cantidadTotal = $linea->cantidad_total;
+            $cantidadRevisada = $linea->cantidad_revisada;
+            $observacion = trim($linea->observaciones ?? '');
+
+            if ($cantidadRevisada < $cantidadTotal && empty($observacion)) {
+                
+                return redirect()->back()->with('error', "La línea del producto '{$linea->product->descripcion}' tiene diferencia de cantidades sin observación.");
+            }
+        }
+
+        $estado = EstadoPedido::where('nombre', 'Observaciones')->first();
+
+        if (!$estado) {
+            return redirect()->back()->with('error', 'Estado "Observaciones" no existe.');
+        }
+
+        $ingreso->estado_pedido_id = $estado->id;
+        $ingreso->save();
+
+        return redirect()->route('ingresos.show', $ingreso)->with('success', 'Pedido finalizado con observaciones.');
     }
 }

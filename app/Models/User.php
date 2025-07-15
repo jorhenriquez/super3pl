@@ -52,4 +52,9 @@ class User extends Authenticatable
         return $this->hasMany(Pedido::class);
     }
 
+    public function ingresos()
+    {
+        return $this->hasMany(Ingreso::class);
+    }
+
 }

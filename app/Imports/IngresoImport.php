@@ -17,7 +17,7 @@ class IngresoImport implements ToModel
     public function model(array $row)
     {
         return new LineaIngreso([
-            'referencia' => $row[0],
+            'referencia' => $row['entrega'],
             'user_id' => Auth::id(), // Asocia al usuario autenticado
             'estado_pedido_id' => EstadoPedido::where('nombre', 'Creado')->first()->id, // Estado por defecto
         ]);

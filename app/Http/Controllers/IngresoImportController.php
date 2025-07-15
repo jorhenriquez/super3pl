@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\LineasIngresoDesdeExcelImport;
 
 class IngresoImportController extends Controller
 {
@@ -13,15 +15,18 @@ class IngresoImportController extends Controller
 
     public function import(Request $request)
     {
-        // Validate the uploaded file
+
         $request->validate([
-            'file' => 'required|file|mimes:csv,txt|max:2048',
+            'file' => 'required|file|mimes:xlsx,xls'
         ]);
 
-        // Handle the file import logic here
-        // For example, you can use a service or a job to process the file
-
-        // Redirect back with success message
-        return redirect()->route('ingresos.index')->with('success', 'File imported successfully.');
+        $lineasFile = $request->file('file');
+        
+        if (file_exists($lineasFile)) {
+            Excel::import(new LineasIngresoDesdeExcelImport, $lineasFile);
+            return redirect()->route('ingresos.index')->with('success', 'Ingresos importados correctamente.');
+        } else {
+            return redirect()->route('ingresos.index')->with('error', 'No existe archivo.');
+        }
     }
 }

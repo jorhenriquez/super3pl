@@ -37,15 +37,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('clientes', ClienteController::class);
     Route::resource('users', UserController::class);
+    Route::resource(('ingresos'), IngresoController::class)->except('index');
     Route::get('pedidos/assign/{pedido}', [PedidoController::class,'assign'])->name('pedidos.assign');
     Route::put('pedidos/assign/{pedido}', [PedidoController::class, 'updateAssign'])->name('pedidos.updateAssign');
     Route::get('pedidos/send/{pedido}', [PedidoController::class,'upEstado'])->name('pedidos.send');
     Route::patch('pedidos/{pedido}/reasignar', [PedidoController::class, 'reasignar'])->name('pedidos.reasignar');
     Route::patch('pedidos/{pedido}/quitar-usuario', [PedidoController::class, 'quitarUsuario'])->name('pedidos.quitarUsuario');
+    Route::get('ingresos/assign/{ingreso}', [IngresoController::class,'assign'])->name('ingresos.assign');
+    Route::put('ingresos/assign/{ingreso}', [IngresoController::class, 'updateAssign'])->name('ingresos.updateAssign');
+    Route::get('ingresos/send/{ingreso}', [IngresoController::class,'upEstado'])->name('ingresos.send');
+    Route::patch('ingresos/{ingreso}/reasignar', [IngresoController::class, 'reasignar'])->name('ingresos.reasignar');
+    Route::patch('ingresos/{ingreso}/quitar-usuario', [IngresoController::class, 'quitarUsuario'])->name('ingresos.quitarUsuario');
     Route::get('errores-validacion', [RegistroErrorValidacionController::class, 'index'])->name('errores.index');
     Route::put('/lineas/{linea}/observacion', [LineasPedidoController::class, 'guardarObservacion'])->name('lineas.observacion');
     Route::get('/dashboard/resumen', [DashboardController::class, 'resumen'])->name('dashboard.resumen');
-    Route::resource(('ingresos'), IngresoController::class);
 });
 
 Route::middleware(['auth', 'role:admin,user'])->group(function () {
@@ -53,15 +58,20 @@ Route::middleware(['auth', 'role:admin,user'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('ingresos', [IngresoController::class, 'index'])->name('ingresos.index');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {return view('dashboard');});
     Route::get('/validacion', [ValidacionController::class, 'index'])->name('validacion.index');
+    Route::get('/validacion_ingreso', [ValidacionController::class, 'index_ingreso'])->name('validacion.ingreso.index');
     Route::get('/validacion/{pedido}', [ValidacionController::class, 'validar'])->name('validacion.validar');
+    Route::get('/validacion/{ingreso}/ingreso', [ValidacionController::class, 'validar_ingreso'])->name('validacion.validar.ingreso');
     Route::post('/validacion/{pedido}/producto', [ValidacionController::class, 'validarProducto'])->name('validacion.producto');
+    Route::post('/validacion/{ingreso}/producto_ingreso', [ValidacionController::class, 'validarProductoIngreso'])->name('validacion.producto.ingreso');
     //Route::post('/validacion/{pedido}', [ValidacionController::class, 'procesar'])->name('validacion.procesar');
     Route::patch('/validacion/{pedido}/finalizar', [ValidacionController::class, 'finalizar'])->name('validacion.finalizar');
+    Route::patch('/validacion/{ingreso}/finalizar_ingreso', [ValidacionController::class, 'finalizar_ingreso'])->name('validacion.finalizar.ingreso');
         Route::post('/seleccionar-cliente', [ClienteController::class, 'seleccionar'])->name('cliente.seleccionar');
     Route::put('/pedidos/{pedido}/finalizar', [PedidoController::class, 'finalizar'])->name('pedidos.finalizar');
 });

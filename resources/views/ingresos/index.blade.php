@@ -74,6 +74,7 @@
                                   
                                 </a>
                             </div>
+
                         </div>
                     </form>
 
@@ -81,25 +82,28 @@
                     <div class="mb-6 flex justify-between items-center space-x-4">
                         
                     
-                    @if(session('status'))
-                        <div class="mb-4 px-4 py-4 bg-green-100 text-green-800 border border-green-400 rounded text-center text-lg font-semibold">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                        @if(session('status'))
+                            <div class="mb-4 px-4 py-4 bg-green-100 text-green-800 border border-green-400 rounded text-center text-lg font-semibold">
+                                {{ session('status') }}
+                            </div>
+                        @endif
 
 
-                    <!-- Inicio de Tabla -->
-                    <x-tabla 
-                        :headers="['Referencia','Fecha','Cliente', 'Cantidad', 'Estado','Asignacion','Acciones']"
-                        :fields="['referencia', 'created_at','cliente.nombre','cantidad','estado_pedido.nombre','user.name']"
-                        :rows="$ingresos" 
-                    />
-
-                    <div class="mt-4">
-                        {{ $ingresos->links() }}
+                        <!-- Inicio de Tabla -->
+                        @if($ingresos->isEmpty())
+                            <p class="text-center text-gray-500">No hay ingresos que coincidan con los filtros.</p>
+                        @else
+                            <x-tabla 
+                                :headers="['Referencia','Fecha', 'Cantidad', 'Estado','Asignacion','Acciones']"
+                                :fields="['referencia', 'created_at','cantidad','estado_pedido.nombre','user.name',1]"
+                                :rows="$ingresos" 
+                            />
+                            <div class="mt-4">
+                                {{ $ingresos->appends(request()->query())->links() }}
+                            </div>
+                        @endif
+             
                     </div>
-
-
                 </div>
             </div>
         </div>
