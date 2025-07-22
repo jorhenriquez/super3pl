@@ -28,9 +28,6 @@
                                     <div>
                                         <strong>Pedido #{{ $pedido->id }}</strong> — {{ $pedido->referencia }}
                                     </div>
-                                    <div>
-                                        {{ $pedido->estado_pedido->nombre }}
-                                    </div>
                                     <a href="{{ route('validacion.validar', $pedido->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
                                         Validar
                                     </a>
@@ -58,13 +55,13 @@
 
                                 <li class="border p-4 rounded flex justify-between items-center {{$estilos[$ingreso->estado_pedido->nombre] ?? 'bg-gray-200'}}">
                                     <div>
-                                        <strong>Ingreso #{{ $ingreso->id }}</strong> — {{ $ingreso->referencia }}
+                                        {{ $ingreso->referencia }}
                                     </div>
                                     <a href="{{ route('validacion.ingreso.pallet', $ingreso->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                                        Validar por pallet
+                                        Pallet
                                     </a>
                                     <a href="{{ route('validacion.validar.ingreso', $ingreso->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                                        Validar por unidad
+                                        Caja
                                     </a>
                                 </li>
                             @endforeach
