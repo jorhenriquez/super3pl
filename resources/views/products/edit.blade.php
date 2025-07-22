@@ -69,6 +69,17 @@
                         @enderror
                     </div>
 
+                    {{-- Campo cantidad_palet --}}
+                    <div class="mb-4">
+                        <label for="cantidad_palet" class="block text-gray-700 font-bold mb-2">Cantidad por Palet</label>
+                        <input type="number" name="cantidad_palet" id="cantidad_palet" 
+                            value="{{ old('cantidad_palet', $producto->cantidad_palet) }}" 
+                            class="border border-gray-300 rounded-md w-full px-3 py-2" min="0">
+                        @error('cantidad_palet')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div>
                         <button type="submit" 
                                 class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">

@@ -124,7 +124,7 @@
                                             <td class="px-6 py-4">{{$linea->cantidad_revisada}}</td>
                                             <td class="px-6 py-4">
                                                 @if(
-                                                    $pedido->estado_pedido->nombre === 'En revision' &&
+                                                    in_array($pedido->estado_pedido->nombre, ['En revision', 'En proceso']) &&
                                                     $linea->cantidad_revisada < $linea->cantidad_total &&
                                                     empty($linea->observaciones)
                                                 )
@@ -175,12 +175,12 @@
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700">Motivo</label>
-                                <select name="motivo_observacion_id" required class="w-full border border-gray-300 rounded-md p-2">
-                                    <option value="">Seleccione un motivo</option>
-                                    @foreach ($motivos as $motivo)
-                                        <option value="{{ $motivo->id }}">{{ $motivo->nombre }}</option>
-                                    @endforeach
-                                </select>
+                                    <select name="motivo_observacion_id" required class="w-full border border-gray-300 rounded-md p-2">
+                                        <option value="" disabled selected>Seleccione un motivo</option>
+                                        @foreach ($motivos as $motivo)
+                                            <option value="{{ $motivo->id }}">{{ $motivo->nombre }}</option>
+                                        @endforeach
+                                    </select>
                             </div>
 
                             <textarea x-model="observacion" name="observaciones" rows="4"

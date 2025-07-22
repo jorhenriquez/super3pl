@@ -13,9 +13,23 @@
                     @else
                         <ul class="space-y-2">
                             @foreach ($pedidos as $pedido)
-                                <li class="border p-4 rounded flex justify-between items-center">
+                                @php 
+                                    $estilos = [
+                                        'Creado' => 'bg-gray-100',
+                                        'En revision' => 'bg-yellow-100',
+                                        'Asignado' => 'bg-blue-100',
+                                        'Revisado' => 'bg-green-100',
+                                        'Observaciones' => 'bg-orange-100',
+                                        'En proceso' => 'bg-purple-100',
+                                        'Anulado' => 'bg-red-100',
+                                    ];
+                                @endphp
+                                <li class="border p-4 rounded flex justify-between items-center {{$estilos[$pedido->estado_pedido->nombre] ?? 'bg-gray-200'}}">
                                     <div>
                                         <strong>Pedido #{{ $pedido->id }}</strong> — {{ $pedido->referencia }}
+                                    </div>
+                                    <div>
+                                        {{ $pedido->estado_pedido->nombre }}
                                     </div>
                                     <a href="{{ route('validacion.validar', $pedido->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
                                         Validar
@@ -24,18 +38,36 @@
                             @endforeach
                         </ul>
                     @endif
-                    
+                    <div class="p-4"></div>
                     @if ($ingresos->isEmpty())
                         <p class="text-gray-600">No tienes pedidos pendientes para validar.</p>
                     @else
                         <ul class="space-y-2">
                             @foreach ($ingresos as $ingreso)
-                                <li class="border p-4 rounded flex justify-between items-center">
+                                @php 
+                                    $estilos = [
+                                        'Creado' => 'bg-gray-100',
+                                        'En revision' => 'bg-yellow-100',
+                                        'Asignado' => 'bg-blue-100',
+                                        'Revisado' => 'bg-green-100',
+                                        'Observaciones' => 'bg-orange-100',
+                                        'En proceso' => 'bg-purple-100',
+                                        'Anulado' => 'bg-red-100',
+                                    ];
+                                @endphp
+
+                                <li class="border p-4 rounded flex justify-between items-center {{$estilos[$ingreso->estado_pedido->nombre] ?? 'bg-gray-200'}}">
                                     <div>
                                         <strong>Ingreso #{{ $ingreso->id }}</strong> — {{ $ingreso->referencia }}
                                     </div>
+                                    <div>
+                                        {{ $ingreso->estado_pedido->nombre }}
+                                    </div>
+                                    <a href="{{ route('validacion.ingreso.pallet', $ingreso->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                                        Validar por pallet
+                                    </a>
                                     <a href="{{ route('validacion.validar.ingreso', $ingreso->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                                        Validar
+                                        Validar por unidad
                                     </a>
                                 </li>
                             @endforeach

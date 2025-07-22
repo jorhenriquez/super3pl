@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LineaIngreso extends Model
 {
-    public $fillable = [
+    protected $fillable = [
         'ingreso_id',
         'product_id',
         'cantidad_total',

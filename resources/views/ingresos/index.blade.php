@@ -10,6 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
+                    <!-- Filtros y botón Importar -->
                     <form method="GET" action="{{ route('ingresos.index') }}" class="mb-6">
                         <div class="flex flex-wrap items-end justify-between gap-4 w-full">
                             <!-- Filtros y acciones -->
@@ -19,7 +20,7 @@
                                     <label class="block text-sm font-medium text-gray-700">Buscar</label>
                                     <input
                                         type="text"
-                                        name="search_ingreso"
+                                        name="search_pedido"
                                         value="{{ request('search_ingreso') }}"
                                         placeholder="Referencia, destino, comuna..."
                                         class="border border-gray-300 rounded-md px-4 py-2"
@@ -74,36 +75,31 @@
                                   
                                 </a>
                             </div>
-
                         </div>
                     </form>
 
-                    <!-- Contenedor flex para buscador + botón en la misma fila -->
-                    <div class="mb-6 flex justify-between items-center space-x-4">
-                        
-                    
-                        @if(session('status'))
-                            <div class="mb-4 px-4 py-4 bg-green-100 text-green-800 border border-green-400 rounded text-center text-lg font-semibold">
-                                {{ session('status') }}
-                            </div>
-                        @endif
+                    <!-- Mensaje de estado -->
+                    @if(session('status'))
+                        <div class="mb-4 px-4 py-4 bg-green-100 text-green-800 border border-green-400 rounded text-center text-lg font-semibold">
+                            {{ session('status') }}
+                        </div>
+                    @endif
 
-
-                        <!-- Inicio de Tabla -->
-                        @if($ingresos->isEmpty())
-                            <p class="text-center text-gray-500">No hay ingresos que coincidan con los filtros.</p>
-                        @else
-                            <x-tabla 
+                    <!-- Tabla -->
+                    @if($ingresos->isEmpty())
+                        <p class="text-center text-gray-500">No hay pedidos que coincidan con los filtros.</p>
+                    @else
+                        <x-tabla 
                                 :headers="['Referencia','Fecha', 'Cantidad', 'Estado','Asignacion','Acciones']"
                                 :fields="['referencia', 'created_at','cantidad','estado_pedido.nombre','user.name',1]"
                                 :rows="$ingresos" 
                             />
-                            <div class="mt-4">
-                                {{ $ingresos->appends(request()->query())->links() }}
-                            </div>
-                        @endif
-             
-                    </div>
+                        
+                        <div class="mt-4">
+                            {{ $ingresos->appends(request()->query())->links() }}
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>

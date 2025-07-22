@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MotivoObservacion extends Model
 {
-    public $fillable = [
+    protected $fillable = [
         'nombre',
     ];
     

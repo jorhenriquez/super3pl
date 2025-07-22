@@ -64,7 +64,10 @@ Route::middleware(['auth', 'role:admin,user'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {return view('dashboard');});
     Route::get('/validacion', [ValidacionController::class, 'index'])->name('validacion.index');
+    Route::get('/ingresos/{ingreso}/validar-pallet', [ValidacionController::class, 'validarPallet'])->name('validacion.ingreso.pallet');
     Route::get('/validacion_ingreso', [ValidacionController::class, 'index_ingreso'])->name('validacion.ingreso.index');
+    Route::post('/validacion/{ingreso}/pallet', [ValidacionController::class, 'validarPalletProducto'])->name('validacion.ingreso.pallet.producto');
+
     Route::get('/validacion/{pedido}', [ValidacionController::class, 'validar'])->name('validacion.validar');
     Route::get('/validacion/{ingreso}/ingreso', [ValidacionController::class, 'validar_ingreso'])->name('validacion.validar.ingreso');
     Route::post('/validacion/{pedido}/producto', [ValidacionController::class, 'validarProducto'])->name('validacion.producto');

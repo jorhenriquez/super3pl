@@ -45,9 +45,12 @@ class ProductController extends Controller
             'descripcion' => 'required|string|max:255',
             'ean' => 'nullable|string|max:50',
             'codigo' => 'nullable|string|max:50',
+            'peso' => 'nullable|numeric',
+            'volumen' => 'nullable|numeric',
+            'cantidad_palet' => 'nullable|integer',
         ]);
 
-        Product::create($request->only(['descripcion', 'ean', 'codigo']));
+        Product::create($request->only(['descripcion', 'ean', 'codigo','peso', 'volumen', 'cantidad_palet']));
 
         return redirect()->route('products.create')->with('success', 'Producto creado correctamente.');
     }
@@ -75,12 +78,18 @@ class ProductController extends Controller
             'codigo' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'ean' => 'nullable|string|max:255',
+            'peso' => 'nullable|numeric',
+            'volumen' => 'nullable|numeric',
+            'cantidad_palet' => 'nullable|integer',
         ]);
 
         $producto = Product::findOrFail($id);
         $producto->codigo = $request->codigo;
         $producto->descripcion = $request->descripcion;
         $producto->ean = $request->ean;
+        $producto->peso = $request->peso;
+        $producto->volumen = $request->volumen;
+        $producto->cantidad_palet = $request->cantidad_palet; 
         $producto->save();
 
         return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente');

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lineas_pedidos', function (Blueprint $table) {
-            $table->text('observaciones')->nullable()->after('cantidad'); // o el campo que desees
+            $table->text('observaciones')->nullable()->after('cantidad_total'); // o el campo que desees
         });
     }
 

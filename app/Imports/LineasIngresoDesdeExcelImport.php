@@ -15,10 +15,10 @@ class LineasIngresoDesdeExcelImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            if ($row['cantidad_entregada'] == 0) {
+            if ($row['cantidad'] == 0) {
                 continue;
             }
-            $referencia = $row['entrega']; // Asegúrate que el nombre es así en el Excel
+            $referencia = $row['referencia']; // Asegúrate que el nombre es así en el Excel
 
             // 1. Crear o buscar pedido
             $ingreso = Ingreso::firstOrCreate(
@@ -39,7 +39,7 @@ class LineasIngresoDesdeExcelImport implements ToCollection, WithHeadingRow
             );
 
             // 3. Crear línea de pedido
-            $cantidad = $row['cantidad_entregada'] ?? 1;
+            $cantidad = $row['cantidad'] ?? 1;
 
             $linea = LineaIngreso::firstOrCreate(
                 [

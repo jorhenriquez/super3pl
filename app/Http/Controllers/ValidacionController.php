@@ -24,8 +24,10 @@ class ValidacionController extends Controller
 
         // Buscar si ya tiene un pedido en revisión
         $pedidoEnRevision = Pedido::where('user_id', $user->id)
-            ->where('estado_pedido_id', 3) // "En revisión"
-            ->first();
+                ->whereHas('estado_pedido', function ($query) {
+                    $query->whereIn('nombre', ['En revision']);
+                })
+                ->first();
 
         if ($pedidoEnRevision) {
             // Redirige directo a validar ese pedido
@@ -34,16 +36,23 @@ class ValidacionController extends Controller
 
         // Si no, mostrar pedidos en estado "Asignado"
         $pedidos = Pedido::with('lineas.product')
-            ->where('estado_pedido_id', 2)
-            ->where(function ($q) use ($user) {
-                $q->whereNull('user_id')->orWhere('user_id', $user->id);
-            })->get();
+                ->whereHas('estado_pedido', function ($q) {
+                    $q->whereIn('nombre', ['Asignado', 'En proceso']);
+                })
+                ->where(function ($q) use ($user) {
+                    $q->whereNull('user_id')
+                    ->orWhere('user_id', $user->id);
+                })
+                ->get();
+
 
         // INGRESOS
 
         $ingresoEnRevision = Ingreso::where('user_id', $user->id)
-            ->where('estado_pedido_id', 3) // "En revisión"
-            ->first();
+                ->whereHas('estado_pedido', function ($query) {
+                    $query->whereIn('nombre', ['En revision']);
+                })
+                ->first();
 
         if ($ingresoEnRevision) {
             // Redirige directo a validar ese pedido
@@ -52,10 +61,14 @@ class ValidacionController extends Controller
 
         // Si no, mostrar pedidos en estado "Asignado"
         $ingresos = Ingreso::with('lineas.product')
-            ->where('estado_pedido_id', 2)
-            ->where(function ($q) use ($user) {
-                $q->whereNull('user_id')->orWhere('user_id', $user->id);
-            })->get();
+                ->whereHas('estado_pedido', function ($q) {
+                    $q->whereIn('nombre', ['Asignado', 'En proceso']);
+                })
+                ->where(function ($q) use ($user) {
+                    $q->whereNull('user_id')
+                    ->orWhere('user_id', $user->id);
+                })
+                ->get();
 
 
         return view('validacion.index', compact('pedidos','ingresos'));
@@ -64,7 +77,7 @@ class ValidacionController extends Controller
 
     public function validar(Pedido $pedido)
     {
-        if ($pedido->estado_pedido->nombre === 'Asignado') {
+        if ($pedido->estado_pedido->nombre === 'Asignado' || $pedido->estado_pedido->nombre === 'En proceso') {
             $pedido->estado_pedido_id = EstadoPedido::where('nombre', 'En revision')->first()->id;
             $pedido->save();
         }
@@ -114,15 +127,9 @@ class ValidacionController extends Controller
             ->exists();
     
         if ($lineasIncompletas) {
-            // Error tipo 3: intento de finalizar sin revisar todo
-            RegistroErrorValidacion::create([
-                'user_id' => Auth::id(),
-                'pedido_id' => $pedido->id,
-                'mensaje_error' => 'Intento de finalizar pedido incompleto.',
-                'error_type_id' => 3,
-            ]);
-    
-            return redirect()->back()->with('error', 'No puedes finalizar: hay productos sin revisar completamente.');
+            $pedido->estado_pedido_id = EstadoPedido::where('nombre', 'En proceso')->first()->id;
+            $pedido->save();    
+            return redirect()->route('validacion.index')->with('status', 'Pedido no se ha finalizado.');
         }
     
         $estado = EstadoPedido::where('nombre', 'Revisado')->first();
@@ -139,9 +146,9 @@ class ValidacionController extends Controller
             ->exists();
     
         if ($lineasIncompletas) {
-            // Error tipo 3: intento de finalizar sin revisar todo
-    
-            return redirect()->back()->with('error', 'No puedes finalizar: hay productos sin revisar completamente.');
+            $ingreso->estado_pedido_id = EstadoPedido::where('nombre', 'En proceso')->first()->id;
+            $ingreso->save();    
+            return redirect()->route('validacion.index')->with('status', 'Pedido no se ha finalizado.');
         }
     
         $estado = EstadoPedido::where('nombre', 'Revisado')->first();
@@ -273,4 +280,69 @@ class ValidacionController extends Controller
             ]);
 
     }
+
+    public function validarPallet(Ingreso $ingreso)
+    {
+        $lineas = $ingreso->lineas()
+            ->with('product')
+            ->whereHas('product', function ($query) {
+                $query->whereNotNull('cantidad_palet')
+                    ->where('cantidad_palet', '>', 0);
+            })
+            ->get()
+            ->filter(function ($linea) {
+                return ($linea->cantidad_total - $linea->cantidad_valida) >= ($linea->product->cantidad_palet ?? 0);
+            })
+            ->values(); // Reindexar la colección para el front-end
+
+        return view('validacion.validar-palet', [
+            'ingreso' => $ingreso,
+            'lineas' => $lineas,
+            'last_validated_id' => null
+        ]);
+    }
+
+
+    public function validarPalletProducto(Request $request, Ingreso $ingreso)
+    {
+        $request->validate([
+            'codigo' => 'required|string',
+        ]);
+
+        // Buscar la línea por código o EAN
+        $linea = $ingreso->lineas()
+            ->with('product')
+            ->whereHas('product', fn($q) =>
+                $q->where('codigo', $request->codigo)
+                ->orWhere('ean', $request->codigo)
+            )->first();
+
+        if (!$linea) {
+            return response()->json(['message' => 'Producto no encontrado en este ingreso.'], 422);
+        }
+
+        // Validar pallet
+        $cantidadPallet = $linea->product->cantidad_palet ?? 0;
+        if ($cantidadPallet <= 0) {
+            return response()->json(['message' => 'El producto no tiene cantidad de pallet definida.'], 422);
+        }
+
+        // Verificar límite
+        if ($linea->cantidad_valida + $cantidadPallet > $linea->cantidad_total) {
+            return response()->json(['message' => 'No puedes validar más de la cantidad total.'], 422);
+        }
+
+        // Actualizar cantidad validada
+        $linea->cantidad_valida += $cantidadPallet;
+        $linea->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Se validó un pallet de {$cantidadPallet} unidades.",
+            'lineas_ingreso' => $ingreso->lineas()->with('product')->get(),
+        ]);
+    }
+
+
+
 }

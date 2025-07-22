@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EstadoPedido extends Model
 {
-   // protected $fillable = ['nombre'];
+    protected $fillable = ['nombre'];
 
     public function pedidos()
     {

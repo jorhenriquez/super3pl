@@ -23,15 +23,6 @@
                             @keyup.enter="enviarCodigo"
                             placeholder="Escanea o escribe el código del producto"
                             class="w-full p-2 border rounded" />
-
-                        <form action="{{ route('validacion.finalizar', $pedido->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de finalizar la validación?')">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit"
-                                    class="mt-6 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 text-lg font-semibold">
-                                Finalizar Validación
-                            </button>
-                        </form>
                     </div>
                     <div class="mt-6">
 
@@ -62,6 +53,16 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <form action="{{ route('validacion.finalizar', $pedido->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de finalizar la validación?')">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit"
+                                    class="mt-6 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 text-lg font-semibold">
+                                Finalizar Validación
+                            </button>
+                        </form>
+                        
                     </div>
                 </div>
             </div>
