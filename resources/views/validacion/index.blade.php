@@ -60,9 +60,6 @@
                                     <div>
                                         <strong>Ingreso #{{ $ingreso->id }}</strong> — {{ $ingreso->referencia }}
                                     </div>
-                                    <div>
-                                        {{ $ingreso->estado_pedido->nombre }}
-                                    </div>
                                     <a href="{{ route('validacion.ingreso.pallet', $ingreso->id) }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
                                         Validar por pallet
                                     </a>
