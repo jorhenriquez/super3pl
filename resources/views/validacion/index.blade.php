@@ -37,7 +37,7 @@
                     @endif
                     <div class="p-4"></div>
                     @if ($ingresos->isEmpty())
-                        <p class="text-gray-600">No tienes pedidos pendientes para validar.</p>
+                        <p class="text-gray-600">No tienes ingresos pendientes para validar.</p>
                     @else
                         <ul class="space-y-2">
                             @foreach ($ingresos as $ingreso)
