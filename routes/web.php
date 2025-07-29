@@ -28,7 +28,8 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     
     Route::get('ingresos/import', [IngresoImportController::class, 'show'])->name('ingresos.import.form');
-    Route::post('ingresos/import', [IngresoImportController::class, 'import'])->name('ingresos.import');
+    Route::post('ingresos/import', [IngresoImportController::class, 'previewExcel'])->name('ingresos.import');
+    Route::post('ingresos/process', [IngresoImportController::class, 'processExcel'])->name('ingresos.process');
     Route::get('products/import', [ProductImportController::class, 'show'])->name('products.import.form');
     Route::post('products/import', [ProductImportController::class, 'import'])->name('products.import');
     Route::get('pedidos/import', [PedidoImportController::class, 'show'])->name('pedidos.import.form');
@@ -54,6 +55,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin,user'])->group(function () {
+    Route::get('/ingresos/{ingreso}/informe', [IngresoController::class, 'informe'])->name('ingresos.informe');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

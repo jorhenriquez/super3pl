@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ingreso;
+use App\Models\Product;
+use App\Models\LineaIngreso;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\LineasIngresoDesdeExcelImport;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Imports\LineasIngresoDesdeExcelImport;
 
 class IngresoImportController extends Controller
 {
@@ -38,13 +43,13 @@ class IngresoImportController extends Controller
         ]);
 
         $file = $request->file('file');
-
+ 
         if ($file) {
             // Guardar temporalmente el archivo
-            $path = $file->store('temp'); // Ejemplo: temp/pRsa2RckQphygDxC.xlsx
-            $fullPath = storage_path('app/' . $path); // Ruta absoluta
+            $path = $file->store('temp', 'local');
+            $fullPath = Storage::disk('local')->path($path);
 
-            if (!file_exists($fullPath)) {
+            if (!Storage::disk('local')->exists($path)) {
                 return redirect()->route('ingresos.index')->with('error', 'No existe archivo.');
             }
 
@@ -62,7 +67,7 @@ class IngresoImportController extends Controller
                 ];
             }
 
-            return view('import.preview', compact('data', 'path'));
+            return view('ingresos.preview', compact('data', 'path'));
         } else {
             return redirect()->route('ingresos.index')->with('error', 'No existe archivo.');
         }
@@ -70,27 +75,71 @@ class IngresoImportController extends Controller
 
     public function processExcel(Request $request)
     {
-        $file = storage_path('app/' . $request->input('file'));
-        $sheetIndex = $request->input('sheet');
+        $request->validate([
+            'file' => 'required|string',
+            'sheet' => 'required|integer',
+            'map' => 'required|array',
+        ]);
+
+        // Ruta al archivo en storage/app/temp
+        $filePath = Storage::disk('local')->path($request->input('file'));
+
+        if (!file_exists($filePath)) {
+            return back()->with('error', 'No se encontró el archivo a procesar.');
+        }
+
+        $sheetIndex = (int) $request->input('sheet');
         $map = $request->input('map');
 
-        $spreadsheet = IOFactory::load($file);
+        $spreadsheet = IOFactory::load($filePath);
         $sheet = $spreadsheet->getSheet($sheetIndex);
         $rows = $sheet->toArray();
 
         $importData = [];
+        $ingreso = null;
+
         foreach (array_slice($rows, 1) as $row) {
-            $importData[] = [
-                'referencia' => $row[$map['referencia']],
-                'codigo' => $row[$map['codigo']],
-                'cantidad' => $row[$map['cantidad']],
-            ];
+            $referencia = $row[$map['referencia']] ?? null;
+            $codigo = $row[$map['codigo']] ?? null;
+            $cantidad = isset($map['cantidad']) && isset($row[$map['cantidad']])
+                ? (int) $row[$map['cantidad']]
+                : 0;
+
+            if ($referencia && $codigo) {
+
+                // Crear el Ingreso solo en la primera iteración
+                if (is_null($ingreso)) {
+                    $ingreso = Ingreso::create([
+                        'referencia' => $referencia,  // usamos la primera referencia válida
+                        'user_id' => null,
+                        'estado_pedido_id' => 1, // estado por defecto
+                    ]);
+                }
+
+                // Buscar el producto
+                $product = Product::where('codigo', $codigo)->first();
+
+                if ($product) {
+                    $importData[] = [
+                        'ingreso_id' => $ingreso->id,
+                        'product_id' => $product->id,
+                        'cantidad_total' => $cantidad,
+                    ];
+                }
+            }
         }
 
-        // Aquí guardas en tu modelo
-        // Ingreso::insert($importData);
+        // Guardar las líneas si existen
+        if (!empty($importData)) {
+            LineaIngreso::insert($importData);
+        }
 
-        return back()->with('status', 'Importación completada');
+
+        // Opcional: eliminar el archivo temporal
+        Storage::disk('local')->delete($request->input('file'));
+
+        return redirect()->route('ingresos.index')->with('status', 'Importación completada');
     }
+
 
 }

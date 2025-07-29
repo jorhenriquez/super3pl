@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ingreso;
+use PDF;
 use App\Models\User;
 use App\Models\Pedido;
+use App\Models\Ingreso;
 use App\Models\EstadoPedido;
 use Illuminate\Http\Request;
 use App\Models\HistorialPedido;
@@ -218,4 +219,24 @@ class IngresoController extends Controller
 
         return redirect()->route('ingresos.show', $ingreso)->with('success', 'Pedido finalizado con observaciones.');
     }
+
+    public function informe(Ingreso $ingreso)
+    {
+        $lineas = $ingreso->lineas->map(function($linea) {
+            return [
+                'codigo' => $linea->product->codigo,
+                'descripcion' => $linea->product->descripcion,
+                'cantidad_total' => $linea->cantidad_total,
+                'cantidad_valida' => $linea->cantidad_valida,
+                'faltante' => max(0, $linea->cantidad_total - $linea->cantidad_valida),
+            ];
+        });
+        $pdf = \PDF::loadView('ingresos.informe', [
+            'ingreso' => $ingreso,
+            'lineas' => $lineas,
+        ]);
+
+        return $pdf->download("informe_ingreso_{$ingreso->id}.pdf");
+    }
+
 }

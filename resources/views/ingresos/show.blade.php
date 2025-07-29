@@ -11,7 +11,14 @@
              
                 <div class="border border-gray-200 rounded-t-lg p-4 bg-gray-50">
                     <h3 class="text-lg font-bold mb-4 text-gray-700">Datos del Pedido</h3>
-                
+                    
+                    <div class="mt-4">
+                        <a href="{{ route('ingresos.informe', $ingreso->id) }}" 
+                        class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Generar Informe
+                        </a>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-800">
                         
                         <div>
