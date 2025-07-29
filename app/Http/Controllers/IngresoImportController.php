@@ -21,7 +21,7 @@ class IngresoImportController extends Controller
 
     public function import(Request $request)
     {
-
+        dd();
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls'
         ]);
