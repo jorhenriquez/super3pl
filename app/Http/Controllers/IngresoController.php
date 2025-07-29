@@ -117,7 +117,7 @@ class IngresoController extends Controller
         //
     }
 
-    public function assign(Request $request, Pedido $pedido)
+    public function assign(Request $request, Ingreso $ingreso)
     {
         $search = $request->input('search');
 
@@ -126,7 +126,7 @@ class IngresoController extends Controller
                 ->orWhere('email', 'like', "%{$search}%");
         })->paginate(10)->withQueryString();
 
-        return view('ingresos.assign', compact('pedido', 'usuarios', 'search'));
+        return view('ingresos.assign', compact('ingreso', 'usuarios', 'search'));
     }
 
     public function updateAssign(Request $request, Ingreso $ingreso)
