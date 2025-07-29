@@ -30,6 +30,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('ingresos/import', [IngresoImportController::class, 'show'])->name('ingresos.import.form');
     Route::post('ingresos/import', [IngresoImportController::class, 'previewExcel'])->name('ingresos.import');
     Route::post('ingresos/process', [IngresoImportController::class, 'processExcel'])->name('ingresos.process');
+    Route::get('/ingresos/{ingreso}/export-excel', [IngresoController::class, 'exportExcel'])->name('ingresos.export-excel');
     Route::get('products/import', [ProductImportController::class, 'show'])->name('products.import.form');
     Route::post('products/import', [ProductImportController::class, 'import'])->name('products.import');
     Route::get('pedidos/import', [PedidoImportController::class, 'show'])->name('pedidos.import.form');

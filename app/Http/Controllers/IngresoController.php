@@ -12,6 +12,8 @@ use App\Models\HistorialPedido;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Exports\IngresoInformeExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class IngresoController extends Controller
@@ -231,12 +233,19 @@ class IngresoController extends Controller
                 'faltante' => max(0, $linea->cantidad_total - $linea->cantidad_valida),
             ];
         });
-        $pdf = \PDF::loadView('ingresos.informe', [
+        /*
+        $pdf = PDF::loadView('ingresos.informe', [
             'ingreso' => $ingreso,
             'lineas' => $lineas,
-        ]);
+        ]);*/
 
-        return $pdf->download("informe_ingreso_{$ingreso->id}.pdf");
+        return redirect()->route('ingresos.index');
     }
+
+    public function exportExcel(Ingreso $ingreso)
+    {
+        return Excel::download(new IngresoInformeExport($ingreso), "informe_ingreso_{$ingreso->id}.xlsx");
+    }
+
 
 }
