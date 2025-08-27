@@ -13,73 +13,29 @@
                 <!-- Navigation Links -->
                 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard.resumen')" :active="request()->routeIs('dashboard.resumen')">
-                        {{ __('Dashboard') }}
+                    <x-nav-link :href="route('inventories.index')" :active="request()->routeIs('inventories.index')">
+                        {{ __('Inventario') }}
                     </x-nav-link>
                 </div>
-
-                @auth
-                    @if(auth()->user()->role === 'admin')
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
-                                {{ __('Usuarios') }}
-                            </x-nav-link>
-                        </div>
-                    @endif
-                @endauth
-
-                @auth
-                    @if(auth()->user()->role === 'admin')
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
-                                {{ __('Productos') }}
-                            </x-nav-link>
-                        </div>
-                    @endif
-                @endauth
-
-
-                @can('admin')
-                    <x-nav-link href="{{ route('errores.index') }}" :active="request()->routeIs('errores.index')">
-                        {{ __('Errores de Validación') }}
-                    </x-nav-link>
-                @endcan
-
-                @auth
-                    @if(auth()->user()->role === 'admin')
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.index')">
-                                {{ __('Clientes') }}
-                            </x-nav-link>
-                        </div>
-                    @endif
-                @endauth
-
-                @auth
-                    @if(auth()->user()->role === 'admin')
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('pedidos.index')" :active="request()->routeIs('pedidos.index')">
-                                {{ __('Pedidos') }}
-                            </x-nav-link>
-                        </div>
-                    @endif
-                @endauth
-
-                @auth
-                    @if(auth()->user()->role === 'admin')
-                        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                            <x-nav-link :href="route('ingresos.index')" :active="request()->routeIs('ingresos.index')">
-                                {{ __('Ingresos') }}
-                            </x-nav-link>
-                        </div>
-                    @endif
-                @endauth
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('validacion.index')" :active="request()->routeIs('validacion.index')">
-                        {{ __('Validacion') }}
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+                        {{ __('Productos') }}
                     </x-nav-link>
                 </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('pedidos.index')" :active="request()->routeIs('pedidos.index')">
+                        {{ __('Pedidos') }}
+                    </x-nav-link>
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('recepciones.index')" :active="request()->routeIs('recepciones.index')">
+                        {{ __('Recepciones') }}
+                    </x-nav-link>
+                </div>
+
                 
             </div>
 
@@ -144,14 +100,8 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard.resumen')" :active="request()->routeIs('dashboard.resumen')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('validacion.index')" :active="request()->routeIs('validacion.index')">
-                {{ __('Validacion') }}
+            <x-responsive-nav-link :href="route('inventories.index')" :active="request()->routeIs('inventories.index')">
+                {{ __('Inventario') }}
             </x-responsive-nav-link>
         </div>
 

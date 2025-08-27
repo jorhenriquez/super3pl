@@ -2,37 +2,26 @@
 
 namespace App\Models;
 
-use App\Models\Cliente;
 use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
-    
-    protected $fillable = ['idDestino','referencia', 'destino', 'direccion', 'comuna', 'cantidad','estado_pedido_id', 'user_id','cliente_id'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function estado_pedido()
-    {
-        return $this->belongsTo(EstadoPedido::class);
-    }
+    protected $fillable = [
+        'numero_pedido',
+        'origen',
+        'cliente_id',
+        'fecha_entrega',
+        'estado',
+    ];
 
     public function lineas()
     {
-        return $this->hasMany(LineasPedido::class);
+        return $this->hasMany(PedidoLinea::class);
     }
 
-    public function cliente()
+    public function estado()
     {
-        return $this->belongsTo(Cliente::class);
-    }
-
-    public function historial()
-    {
-        return $this->hasMany(HistorialPedido::class)->latest();
+        return $this->belongsTo(EstadoPedido::class, 'estado_pedido_id');
     }
 
 

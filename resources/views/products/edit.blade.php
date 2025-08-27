@@ -48,6 +48,15 @@
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    <div class="mb-4">
+                        <label for="dun" class="block text-gray-700 font-bold mb-2">DUN</label>
+                        <input type="text" name="dun" id="dun" 
+                               value="{{ old('dun', $producto->dun) }}" 
+                               class="border border-gray-300 rounded-md w-full px-3 py-2">
+                        @error('dun')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                     <div class="mb-4">
                         <label for="peso" class="block text-gray-700 font-bold mb-2">Peso</label>

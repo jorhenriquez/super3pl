@@ -3,22 +3,35 @@
 namespace App\Imports;
 
 use App\Models\Pedido;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use App\Models\PedidoLinea;
+use App\Models\Product;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
 
-class PedidosImport implements ToModel, WithHeadingRow
+class PedidosImport implements ToCollection
 {
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
-        return new Pedido([
-            'idDestino' => $row['cliente'],
-            'referencia' => $row['referencia'],
-            'destino' => $row['destino'],
-            'direccion' => $row['direccion'],
-            'comuna' => $row['comuna'],
-            'cantidad' => $row['cantidad'],
-            'estado_pedido_id' => 1, // Por defecto estado 1 si no viene
-            'cliente_id' => session('cliente_activo'), // Asocia el cliente activo
-        ]);
+        // Se asume que la primera fila es header
+        $rows->skip(1)->each(function ($row) {
+            $pedido = Pedido::firstOrCreate(
+                ['numero_pedido' => $row[0]],
+                [
+                    'origen' => 'cliente',
+                    'fecha_entrega' => \Carbon\Carbon::createFromFormat('d/m/Y', $row[1])->format('Y-m-d'),
+                ]
+            );
+
+            $product = Product::firstOrCreate(
+                ['wms_code' => $row[2]],
+                ['name' => $row[3], 'internal_code' => $row[4] ?? null]
+            );
+
+            PedidoLinea::create([
+                'pedido_id'  => $pedido->id,
+                'product_id' => $product->id,
+                'cantidad'   => $row[5],
+            ]);
+        });
     }
 }

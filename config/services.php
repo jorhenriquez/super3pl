@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'alerce' => [
+        'base_url' => env('ALERCE_STOCK_URL'),
+        'token_name' => env('ALERCE_STOCK_TOKEN_NAME'),
+        'token_stock' => env('ALERCE_STOCK_TOKEN'),
+        'token_estadopedidos' => env('ALERCE_ESTADO_PEDIDO_TOKEN'),
+        'delegacion' => env('ALERCE_STOCK_DELEGACION'),
+        'codigo_cliente' => env('ALERCE_CODIGO_CLIENTE'),
+        'token_actas_estandar' => env('ALERCE_ESTADO_ACTAS_ESTANDAR_TOKEN'),
+    ],
+
+
 ];

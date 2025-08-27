@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Imports;
 
@@ -8,15 +8,16 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class ProductsImport implements ToModel, WithHeadingRow
 {
+    /**
+     * @param array $row
+     */
     public function model(array $row)
     {
         return new Product([
-            'descripcion' => $row['descripcion'],
-            'codigo' => $row['codigo'],
-            'ean' => $row['ean'],
-            'ean_modificado' => $row['ean_mod'],
-            'peso' => isset($row['peso']) ? $row['peso'] : null,
-            'volumen' => isset($row['volumen']) ? $row['volumen'] : null,
+            'wms_code'      => $row['cod_wms'],      // nombre de la columna en Excel
+            'internal_code' => $row['cod_cliente'],  // nombre de la columna en Excel
+            'name'          => $row['nombre'],       // nombre de la columna en Excel
         ]);
     }
 }
+ 

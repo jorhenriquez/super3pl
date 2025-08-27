@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pedidos') }}
+            {{ __('Recepciones') }}
         </h2>
     </x-slot>
 
@@ -20,8 +20,8 @@
                                     <label class="block text-sm font-medium text-gray-700">Buscar</label>
                                     <input
                                         type="text"
-                                        name="search_pedido"
-                                        value="{{ request('search_pedido') }}"
+                                        name="search"
+                                        value="{{ request('search') }}"
                                         placeholder="Referencia, destino, comuna..."
                                         class="border border-gray-300 rounded-md px-4 py-2"
                                     />
@@ -44,8 +44,8 @@
                                     <select name="estado" class="border border-gray-300 rounded-md px-4 py-2">
                                         <option value="">Todos</option>
                                         @foreach($estados as $estado)
-                                            <option value="{{ $estado }}" {{ request('estado') === $estado ? 'selected' : '' }}>
-                                                {{ $estado }}
+                                            <option value="{{ $estado['descripcion'] }}" {{ request('estado') === $estado ? 'selected' : '' }}>
+                                                {{ $estado['descripcion'] }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -56,7 +56,7 @@
                                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                                         Filtrar
                                     </button>
-                                    <a href="{{ route('pedidos.index') }}"
+                                    <a href="{{ route('recepciones.index') }}"
                                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
                                         Limpiar
                                     </a>
@@ -88,16 +88,16 @@
                     @endif
 
                     <!-- Tabla -->
-                    @if($pedidos->isEmpty())
+                    @if($recepciones->isEmpty())
                         <p class="text-center text-gray-500">No hay pedidos que coincidan con los filtros.</p>
                     @else
                         <x-tabla 
-                            :headers="['Referencia', 'Fecha', 'Origen','F. de entrea','Estado','Acciones']"
-                            :fields="['numero_pedido', 'created_at','origen','fecha_entrega','estado',1]"
-                            :rows="$pedidos" 
+                            :headers="['Acta', 'Referencia', 'Referencia 2','Alta','Confirmación','Ubicación','Estado','Acciones']"
+                            :fields="['numeroActa', 'referencia','referencia2','fechaAlta','fechaConfirmacion','fechaUbicacion','estado.descripcion',1]"
+                            :rows="$recepciones" 
                         />
                         <div class="mt-4">
-                            {{ $pedidos->links()  }}
+                            {{ $recepciones->links()  }}
                         </div>
                     @endif
 
