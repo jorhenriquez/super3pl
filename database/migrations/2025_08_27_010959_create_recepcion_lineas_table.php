@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('recepcion_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->integer('linea');
             $table->integer('cantidad');          // cantidad ingresada
             $table->string('paletizacion')->nullable(); // información de paletización
             $table->decimal('peso', 12, 3)->nullable(); // opcional, si se registra el

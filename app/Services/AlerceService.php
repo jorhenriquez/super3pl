@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use App\Models\Pedido;
+use App\Models\Recepcion;
 
 class AlerceService
 {
@@ -14,6 +15,7 @@ class AlerceService
     protected $delegacion;
     protected $codigo_cliente;
     protected $token_actas_estandar;
+    protected $token_actas_ubicadas;
 
     public function __construct()
     {
@@ -24,6 +26,7 @@ class AlerceService
         $this->delegacion = config('services.alerce.delegacion');
         $this->codigo_cliente = config('services.alerce.codigo_cliente');
         $this->token_actas_estandar = config('services.alerce.token_actas_estandar');
+        $this->token_actas_ubicadas = config('services.alerce.token_actas_ubicadas');
     }
 
     public function getStock()
@@ -91,6 +94,50 @@ class AlerceService
         return [];
     }
 
+    public function getActaUbicada(Recepcion $recepcion)
+    {
+        $url = $this->baseUrl . 'ExportacionEstadosActasEstandar/exportar/'.$this->codigo_cliente;
+        $body = [
+            'delegacion' => $this->delegacion,
+            'documento' => $recepcion->referencia,
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept'       => 'application/json',
+            $this->token_name => $this->token_actas_ubicadas,
+        ])->post($url,$body);
+     
+
+        if ($response->successful()) {
+            
+            return $response->json()['datos'] ?? [];
+        }
+
+        return [];
+    }
+
+    public function getActasUbicadas()
+    {
+        $url = $this->baseUrl . 'ExportacionEstadosActasEstandar/exportar/'.$this->codigo_cliente;
+        $body = [
+            'delegacion' => $this->delegacion,
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept'       => 'application/json',
+            $this->token_name => $this->token_actas_ubicadas,
+        ])->post($url,$body);
+     
+
+        if ($response->successful()) {
+            
+            return $response->json()['datos'] ?? [];
+        }
+
+        return [];
+    }
 
     public function enviarPedido($pedidos)
     {

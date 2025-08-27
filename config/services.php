@@ -43,6 +43,7 @@ return [
         'delegacion' => env('ALERCE_STOCK_DELEGACION'),
         'codigo_cliente' => env('ALERCE_CODIGO_CLIENTE'),
         'token_actas_estandar' => env('ALERCE_ESTADO_ACTAS_ESTANDAR_TOKEN'),
+        'token_actas_ubicadas' => env('ALERCE_ESTADO_ACTAS_UBICADAS_TOKEN'),
     ],
 
 

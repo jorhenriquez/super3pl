@@ -37,13 +37,17 @@ class SyncStockFromAlerce extends Command
                 ['name' => '', 'internal_code' => $item['articulo']]
             );
 
+            $fecha_caducidad = null;
+            if ($item['fechaCaducidad'])
+                $fecha_caducidad = Carbon::createFromFormat('d/m/Y', $item['fechaCaducidad'])->format('Y-m-d') ?? null;
+
             Inventory::updateOrCreate(
                 [
                     'product_id' => $product->id,
                     'warehouse' => $item['deposito'],
                     'store'     => $item['almacen'],
                     'lote'      => $item['lote'],
-                    'fecha_caducidad' => Carbon::createFromFormat('d/m/Y', $item['fechaCaducidad'])->format('Y-m-d'),
+                    'fecha_caducidad' => $fecha_caducidad,
                 ],
                 ['quantity' => $item['cantidad']]
             );
